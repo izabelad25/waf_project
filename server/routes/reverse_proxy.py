@@ -17,14 +17,19 @@ from db.logger import activity_logs_buffer, firewall_actions_buffer
 proxy_router = APIRouter()
 
 # target app URL ==> trb variabila globala env
-target_URL = "http://localhost:8080"
+#PORT 3000 ==> protected app port
+target_URL = "http://localhost:3000"
 client = httpx.AsyncClient(base_url=target_URL)
 
 # Rules that must be evaluated against the RAW (un-decoded) path/query,
 # because their entire purpose is to detect encoding tricks.
 # All other rules run against the fully-decoded values.
-RAW_PATH_RULES  = {32}   # Block Double URL Encoding (PATH)
-RAW_QUERY_RULES = {33}   # Block Double URL Encoding (QUERY)
+RAW_PATH_RULES  = {1, 32}   # Block Double URL Encoding (PATH)
+RAW_QUERY_RULES = {3, 33}   # Block Double URL Encoding (QUERY)
+
+#log only function for log only rules
+def _log_only(rule_id: int, trigger: str, request_id: str, timestamp):
+    firewall_actions_buffer.append((str(uuid.uuid4()), timestamp, request_id, rule_id, "LOG WARNING", trigger))
 
 
 # this prevents HTTP VERB TAMPERING
@@ -44,11 +49,14 @@ async def reverse_proxy(request: Request, path: str):
     # Keep the originals for:
     #   1. Forwarding to the protected app (always send what the client sent)
     #   2. Double-encoding detection rules (rules 32, 33)
-    raw_path  = request.url.path
-    raw_query = request.url.query
+    raw_path_bytes = request.scope.get("raw_path", b"")
+    raw_path  = raw_path_bytes.decode("utf-8", errors="ignore")
 
-    # Two unquote passes: first pass decodes %2e → .
-    #                     second pass decodes %252e → %2e → .  (double-encoded)
+    raw_query_bytes=request.scope.get("query_string", b"")
+    raw_query = raw_query_bytes.decode("utf-8", errors="ignore")
+
+    # Two unquote passes: first pass decodes %2e == .
+    #                     second pass decodes %252e == %2e == .  (double-encoded)
     full_path    = urllib.parse.unquote(urllib.parse.unquote(raw_path))
     query_string = urllib.parse.unquote(urllib.parse.unquote(raw_query))
 
@@ -87,7 +95,7 @@ async def reverse_proxy(request: Request, path: str):
             if rule['action'] == 'BLOCK':
                 return block_request(rule['rule_id'], match.group(0), "Malicious path pattern detected")
             #LOG-only rules  
-            firewall_actions_buffer.append(str(uuid.uuid4()), timestamp, request_id, rule['rule_id'], "LOG - possible thread", match.group(0))
+            _log_only(rule['rule_id'], match.group(0), request_id, timestamp)
 
     #  Check 3 = malicious QUERY STRING 
 
@@ -95,10 +103,22 @@ async def reverse_proxy(request: Request, path: str):
     # malformed characters that an empty-looking string can still contain.
 
     for rule in CACHE_REGEX['QUERY_STRING']:
-        target = raw_query if rule['rule_id'] in RAW_QUERY_RULES else query_string
-        match  = rule['pattern'].search(target)
+        is_raw_rule = int(rule.get('rule_id', -1)) in RAW_QUERY_RULES
+        
+        target = raw_query if is_raw_rule else query_string
+        
+        if is_raw_rule and raw_query:
+            target = f"?{target}"
+            
+        search_target = target.lower() if is_raw_rule else target
+        match = rule['pattern'].search(search_target)
+        
         if match:
-            return block_request(rule['rule_id'], match.group(0), "Malicious query string detected")
+            if rule['action'] == 'BLOCK':
+                return block_request(rule['rule_id'], match.group(0), "Malicious query string detected")
+            
+            _log_only(rule['rule_id'], match.group(0), request_id, timestamp)
+
 
     #  Check 4 = malicious HEADERS 
 
@@ -111,7 +131,9 @@ async def reverse_proxy(request: Request, path: str):
         for rule in CACHE_REGEX['HEADERS']:
             match = rule['pattern'].search(merged_header)
             if match:
-                return block_request(rule['rule_id'], match.group(0), "Malicious HTTP header detected")
+                if rule['action'] == 'BLOCK':
+                    return block_request(rule['rule_id'], match.group(0), "Malicious HTTP header detected")
+                _log_only(rule['rule_id'], match.group(0), request_id, timestamp)
 
     # Check 5 : malicious BODY 
 
@@ -130,15 +152,21 @@ async def reverse_proxy(request: Request, path: str):
             for rule in CACHE_REGEX['BODY']:
                 match = rule['pattern'].search(body_string)
                 if match:
-                    return block_request(rule['rule_id'], match.group(0), "Malicious payload in request body")
-
+                    if rule['action'] == 'BLOCK':
+                        return block_request(rule['rule_id'], match.group(0), "Malicious payload in request body")
+                    _log_only(rule['rule_id'], match.group(0), request_id, timestamp)
 
     # FORWARD clean traffic to the protected app
      
     # Always forward the ORIGINAL raw URL — never the decoded version.
     # The protected app expects what the client actually sent.
 
-    url = httpx.URL(path=raw_path, query=raw_query.encode("utf-8"))
+    raw_uri = raw_path
+
+    if raw_query:
+        raw_uri += f"?{raw_query}"
+    
+    url = f"{target_URL}{raw_uri}"
 
     headers = dict(request.headers)
     headers.pop("host", None)   # httpx sets the correct Host for the target

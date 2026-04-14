@@ -70,34 +70,34 @@ default_rules = [
     (9, 'Block IIS Short Name Scan', 'REGEX_MATCH', 'PATH', r'(?i)::(?:\$INDEX_ALLOCATION|\$DATA)', 'BLOCK'),
     
     #SQL injection rules
-    (10, 'Block SQLi Auth Bypass', 'REGEX_MATCH', 'QUERY_STRING', r"(?i)(?:'\s*(?:or|and)\s*'?\d|'\s*(?:or|and)\s*'[^']*'='|--\s*$|;\s*--)", 'BLOCK'),
+    (10, 'Block SQLi Auth Bypass', 'REGEX_MATCH', 'QUERY_STRING', r"(?i)(?:'\s*(?:or|and)\s*'?\w|'\s*(?:or|and)\s*'[^']*'='|--(?:\s|$)|;\s*--)", 'BLOCK'),
     
-    (11, 'Block SQLi Auth Bypass (Body)', 'REGEX_MATCH', 'BODY', r"(?i)(?:'\s*(?:or|and)\s*'?\d|'\s*(?:or|and)\s*'[^']*'='|--\s*$|;\s*--)", 'BLOCK'),
+    (11, 'Block SQLi Auth Bypass (Body)', 'REGEX_MATCH', 'BODY', r"(?i)(?:'\s*(?:or|and)\s*'?\w|'\s*(?:or|and)\s*'[^']*'='|--(?:\s|$)|;\s*--)", 'BLOCK'),
     
     (12, 'Block SQLi UNION SELECT', 'REGEX_MATCH', 'QUERY_STRING', r"(?i)union[\s\/*\/!+#-]*(?:all[\s\/*\/!+#-]*)?select", 'BLOCK'),
 
     (13, 'Block SQLi UNION SELECT (Body)', 'REGEX_MATCH', 'BODY', r"(?i)union[\s\/*\/!+#-]*(?:all[\s\/*\/!+#-]*)?select", 'BLOCK'),
 
     ##########risk for false blocking 14-16######################
-    (14, 'Block SQLi Comment Obfuscation', 'REGEX_MATCH', 'QUERY_STRING', r"(?i)(?:/\*.*?\*/|/\*![\d]*\s|--[^\r\n]*|#[^\r\n]*)", 'LOG'),
+    (14, 'LOG SQLi Comment Obfuscation', 'REGEX_MATCH', 'QUERY_STRING', r"(?i)(?:/\*.*?\*/|/\*![\d]*\s|--[^\r\n]*|#[^\r\n]*)", 'LOG'),
 
-    (15, 'Block SQLi Dangerous Keywords', 'REGEX_MATCH', 'QUERY_STRING', r"(?i)\b(?:select|insert|update|delete|drop|truncate|exec(?:ute)?|xp_|sp_|information_schema|sysobjects|syscolumns|waitfor[\s+]delay|benchmark\s*\(|sleep\s*\()\b", 'LOG'),
+    (15, 'LOG SQLi Dangerous Keywords', 'REGEX_MATCH', 'QUERY_STRING', r"(?i)\b(?:select|insert|update|delete|drop|truncate|exec(?:ute)?|xp_|sp_|information_schema|sysobjects|syscolumns|waitfor[\s+]delay|benchmark\s*\(|sleep\s*\()\b", 'LOG'),
 
-    (16, 'Block SQLi Dangerous Keywords (Body)', 'REGEX_MATCH', 'BODY', r"(?i)\b(?:select|insert|update|delete|drop|truncate|exec(?:ute)?|xp_|sp_|information_schema|sysobjects|syscolumns|waitfor[\s+]delay|benchmark\s*\(|sleep\s*\()\b", 'LOG'),
+    (16, 'LOG SQLi Dangerous Keywords (Body)', 'REGEX_MATCH', 'BODY', r"(?i)\b(?:select|insert|update|delete|drop|truncate|exec(?:ute)?|xp_|sp_|information_schema|sysobjects|syscolumns|waitfor[\s+]delay|benchmark\s*\(|sleep\s*\()\b", 'LOG'),
     
-    (17, 'Block SQLi Boolean Blind', 'REGEX_MATCH', 'QUERY_STRING', r"(?i)(?:\d+\s*[<=>]=?\s*\d+|'\s*=\s*'|and\s+\d+\s*[<=>]=?\s*\d+|or\s+\d+\s*[<=>]=?\s*\d+|1\s*=\s*1|0\s*=\s*0)", 'LOG'),
+    (17, 'LOG SQLi Boolean Blind', 'REGEX_MATCH', 'QUERY_STRING', r"(?i)(?:\d+\s*[<=>]=?\s*\d+|'\s*=\s*'|and\s+\d+\s*[<=>]=?\s*\d+|or\s+\d+\s*[<=>]=?\s*\d+|1\s*=\s*1|0\s*=\s*0)", 'LOG'),
     ##########################################################
     
     (18, 'Block SQLi in Headers (Cookie)', 'REGEX_MATCH', 'HEADERS', r"(?i)(?:union[\s\/\*]+select|'\s*(?:or|and)\s*'|--[^\r\n]*|/\*.*?\*/|waitfor[\s+]delay|benchmark\s*\()", 'BLOCK'),
     
     #cross site scripting rules XSS
-    (20, 'Block XSS Script Tags', 'REGEX_MATCH', 'QUERY_STRING', r"(?i)<\s*script[\s>\/]", 'BLOCK'),
+    (20, 'Block XSS Script Tags', 'REGEX_MATCH', 'QUERY_STRING', r"(?i)(?:<\s*script[\s>\/]|%3c\s*script)", 'BLOCK'),
 
     (21, 'Block XSS Script Tags (Body)', 'REGEX_MATCH', 'BODY', r"(?i)<\s*script[\s>\/]", 'BLOCK'),
 
-    (22, 'Block XSS Event Handlers', 'REGEX_MATCH', 'QUERY_STRING', r"(?i)[\s\"'`;\/0-9\=\x00\x09\x0a\x0b\x0c\x0d\x3b\x2c\x28]+on\w+[\s\x00\x09\x0a\x0b\x0c\x0d\x3b\x2c\x28]*=", 'BLOCK'),
+    (22, 'Block XSS Event Handlers', 'REGEX_MATCH', 'QUERY_STRING', r"(?i)\bon(?:error|load|click|mouseover|mouseout|focus|blur|change|submit|keydown|keyup|keypress|input|select|dblclick|contextmenu|drag|drop|copy|paste|cut|scroll|resize|abort|canplay|ended|pause|play|seeking|stalled|suspend|volumechange|waiting|message|open|close|beforeunload|hashchange|popstate|storage|online|offline|animationstart|animationend|transitionend)\s*=", 'BLOCK'),
 
-    (23, 'Block XSS Event Handlers (Body)', 'REGEX_MATCH', 'BODY', r"(?i)[\s\"'`;\/0-9\=\x00\x09\x0a\x0b\x0c\x0d\x3b\x2c\x28]+on\w+[\s\x00\x09\x0a\x0b\x0c\x0d\x3b\x2c\x28]*=", 'BLOCK'),
+    (23, 'Block XSS Event Handlers (Body)', 'REGEX_MATCH', 'BODY', r"(?i)\bon(?:error|load|click|mouseover|mouseout|focus|blur|change|submit|keydown|keyup|keypress|input|select|dblclick|contextmenu|drag|drop|copy|paste|cut|scroll|resize|abort|canplay|ended|pause|play|seeking|stalled|suspend|volumechange|waiting|message|open|close|beforeunload|hashchange|popstate|storage|online|offline|animationstart|animationend|transitionend)\s*=", 'BLOCK'),
 
     (24, 'Block XSS Javascript URI', 'REGEX_MATCH', 'QUERY_STRING', r"(?i)(?:javascript|vbscript)\s*:|data:(?:text/html|application/[a-z+]+|image/svg)", 'BLOCK'),
 
@@ -124,7 +124,22 @@ default_rules = [
 
     (35, 'Block Non-Printable Characters in Query', 'REGEX_MATCH', 'QUERY_STRING', r"[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]", 'BLOCK'),
 
-    (36, 'Block Backslash in URI Path', 'REGEX_MATCH', 'PATH', r"\\", 'BLOCK')
+    (36, 'Block Backslash in URI Path', 'REGEX_MATCH', 'PATH', r"\\", 'BLOCK'),
+
+    #RCE remote code exec
+    (37, 'Block Command Injection', 'REGEX_MATCH', 'QUERY_STRING', r'(?i)(?:[;&|`$%](?:7[Cc]|26)?\s*(?:cat|ls|id|whoami|curl|wget|bash|sh|cmd|powershell)\b'
+     r'|%7[Cc]\s*(?:cat|ls|id|whoami|curl|wget|bash|sh|cmd|powershell)\b'
+     r'|%26\s*(?:cat|ls|id|whoami|curl|wget|bash|sh|cmd|powershell)\b'
+     r'|\|\s*(?:cat|ls|id|whoami|curl|wget|bash|sh|cmd|powershell)\b'
+     r'|&\s*(?:cat|ls|id|whoami|curl|wget|bash|sh|cmd|powershell)\b'
+     r'|\$\(|\$\{IFS\})', 'BLOCK'),
+
+    (38, 'Block Command Injection (BODY)', 'REGEX_MATCH', 'BODY', r'(?i)(?:[;&|`$]\s*(?:cat|ls|id|whoami|curl|wget|bash|sh|cmd|powershell)\b|\$\(|\$\{IFS\})', 'BLOCK'),
+
+
+    #SERVER-SIDE REQUEST FORGERY
+    (39, 'Block SSRF - Internal IP Ranges', 'REGEX_MATCH', 'QUERY_STRING', r'(?i)(?:169\.254\.169\.254|192\.168\.\d+\.\d+|10\.\d+\.\d+\.\d+|172\.(?:1[6-9]|2\d|3[01])\.\d+\.\d+|127\.0\.0\.\d+|localhost)', 'BLOCK'),
+    (40, 'Block SSRF - File/Dict Protocol', 'REGEX_MATCH', 'QUERY_STRING', r'(?i)(?:^|\b)(?:file|dict|gopher|ftp):\/\/', 'BLOCK')
 
     
 ]
@@ -155,17 +170,6 @@ CACHE_REGEX: dict = {
  
  
 def reload_cache():
-    """
-    Reload all active rules from the database into memory.
- 
-    Call this at startup and expose it via an admin API endpoint so that
-    rules edited in the database at runtime are picked up without a restart:
- 
-        @admin_router.post("/admin/reload-rules")
-        async def reload_rules():
-            reload_cache()
-            return {"status": "ok"}
-    """
     global CACHE_IPS, CACHE_REGEX
  
     print("Loading rules into memory...")

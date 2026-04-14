@@ -1,48 +1,98 @@
-import uvicorn
+#server
 import asyncio
+import uvicorn
+
+#services
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
+from fastapi.middleware.cors import CORSMiddleware 
 
-from db import init_db
+#routes
 from db.logger import log_background_listener
-
-from routes.waf_rules import rule_router 
+from routes.waf_rules import rule_router
 from routes.network_logs import logs_router
 from routes.waf_actions_log import waf_actions_router
 from routes.reverse_proxy import proxy_router
 
-from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse
+#UI dashboard app  PORT 8000
+# !! proxy app on its separated port only
 
-from fastapi.middleware.cors import CORSMiddleware
+dashboard_app = FastAPI(title="Firewall - Dashboard")
 
+#cors middleware 
+dashboard_app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
+dashboard_app.include_router(rule_router)
+dashboard_app.include_router(logs_router)
+dashboard_app.include_router(waf_actions_router)
 
-app = FastAPI(title="Fireball")
-app.add_middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"], allow_headers=["*"])
+dashboard_app.mount("/client", StaticFiles(directory="client"), name="client")
 
-app.include_router(rule_router)
-app.include_router(logs_router)
-app.include_router(waf_actions_router)
-
-#interface
-app.mount("/client", StaticFiles(directory="client"), name="client")
-@app.get("/")
-async def dashboard():
+@dashboard_app.get("/")
+async def load_dashboard():
     return FileResponse("client/dashboard.html")
 
+#PROXY app PORT 8080
+#handles the requests and runs the waf engine
+
+proxy_app = FastAPI(title="Fireball - proxy")
+
+proxy_app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+proxy_app.include_router(proxy_router)
 
 
-#ruta proxy ULTIMA MEREU
-app.include_router(proxy_router)
+#START
 
-#background listener for collecting logs into batches
-@app.on_event("startup")
+@dashboard_app.on_event("startup")
 async def startup_listener():
-    #infinite loop since startup
     asyncio.create_task(log_background_listener())
-    
+    print("FIREWALL log batcher ACTIVE :P")
+
+
+# 2 SERVERS LAUNCHER
+async def main():
+    dashboard_config = uvicorn.Config(
+        app=dashboard_app,
+        host="127.0.0.1",
+        port=8000,
+        log_level="info",
+    )
+
+    proxy_config = uvicorn.Config(
+        app=proxy_app,
+        host="127.0.0.1",
+        port=8080,
+        log_level="info",
+    )
+
+    dashboard_server = uvicorn.Server(dashboard_config)
+    proxy_server = uvicorn.Server(proxy_config)
+
+    print("#"*55)
+    print(" FIREBALL ")
+    print(f"  Dashboard  ->  http://127.0.0.1:8000")
+    print(f"  Proxy      ->  http://127.0.0.1:8080  (point your app here)")
+    print("#" * 55)
+
+
+    await asyncio.gather(
+        dashboard_server.serve(),
+        proxy_server.serve(),
+    )
 
 if __name__ == "__main__":
-    print("Firewall active ! :)")
-    uvicorn.run("main:app", host="127.0.0.1", port=8000)
+    asyncio.run(main())
+
 
