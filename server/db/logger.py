@@ -28,7 +28,7 @@ def logs_writer():
 
 #background function == runs the writer every second == avoids db crash
 async def log_background_listener():
-    print("Log listener active :p")
+    #print("Log listener active :p")
     while True:
         await asyncio.sleep(1)
         logs_writer()

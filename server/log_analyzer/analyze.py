@@ -18,7 +18,7 @@ def block_and_log(ip: str, trigger: str, reason: str, current_time):
         print(f"[WAF BLOCK] IP={ip} | trigger={trigger!r} | reason={reason} --> Rules updated!")
 
 async def analyzer():
-    print("mr 305 analyzer active ! ")
+    
 
     #every threath has a specific query 
     #format == label, query, block threshold, template reason, label for trigger 

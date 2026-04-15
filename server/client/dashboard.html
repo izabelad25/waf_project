@@ -10,18 +10,18 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg:    #080b0f;
-      --s1:    #0d1117;
-      --s2:    #131820;
-      --s3:    #1a2030;
-      --br:    #1e2736;
+      --bg:    #000001;
+      --s1:    #13171ebf;
+      --s2:    #00060e;
+      --s3:    #000000;
+      --br:    #517c83;
       --br2:   #243040;
-      --cyan:  #00e0ff;
+      --cyan:  #55ebff;
       --red:   #ff3a5c;
-      --grn:   #39ff7a;
-      --amb:   #ffb020;
+      --grn:   #35fe78;
+      --amb:   #e3f72e;
       --txt:   #a8b8cc;
-      --txt2:  #5a6a7e;
+      --txt2:  #d7f9ff;
       --txt3:  #2e3d50;
       --mono:  'JetBrains Mono', monospace;
       --sans:  'Syne', sans-serif;
@@ -358,8 +358,8 @@
 
   <!-- ── TOPBAR ──────────────────────────────────────────────── -->
   <div class="top">
-    <div class="logo"><div class="fire"></div>FIREBALL</div>
-    <span class="ver">WAF v1.0</span>
+    <div class="logo"><div class="fire"></div>F I R E B A L L</div>
+    <span class="ver">safe!</span>
     <div class="topright">
       <div class="live-ind"><div class="live-dot"></div>proxy active</div>
       <div class="proxy-info">dashboard <span>:8000</span> · proxy <span>:8080</span> → <span id="target-display">localhost:3000</span></div>
@@ -370,11 +370,11 @@
   <div class="side">
     <div class="nav-sec">main</div>
     <div class="nav on"  onclick="sv('home',this)">    <span class="nav-ico">⌂</span>Home</div>
-    <div class="nav"     onclick="sv('overview',this)"><span class="nav-ico">▦</span>Overview</div>
-    <div class="nav"     onclick="sv('traffic',this)"> <span class="nav-ico">≋</span>Live traffic</div>
+    <div class="nav"     onclick="sv('overview',this)"><span class="nav-ico">.:|</span>Analytics</div>
+    <div class="nav"     onclick="sv('traffic',this)"> <span class="nav-ico">⇌</span>Live traffic</div>
     <div class="nav-sec">firewall</div>
-    <div class="nav"     onclick="sv('rules',this)">   <span class="nav-ico">⊞</span>WAF rules</div>
-    <div class="nav"     onclick="sv('actions',this)"> <span class="nav-ico">🗲</span>Actions log<span class="nav-badge" id="badge-count">0</span></div>
+    <div class="nav"     onclick="sv('rules',this)">   <span class="nav-ico">☰</span>Rules</div>
+    <div class="nav"     onclick="sv('actions',this)"> <span class="nav-ico">></span>Actions<span class="nav-badge" id="badge-count">0</span></div>
   </div>
 
   <!-- ── MAIN CONTENT ────────────────────────────────────────── -->
@@ -382,12 +382,12 @@
 
     <!-- HOME ─────────────────────────────────────────── -->
     <div class="view on" id="view-home">
-      <div class="ph">Protected app</div>
-      <div class="ps">Configure the target your WAF is shielding</div>
+      <div class="ph">"`-._,-'"`-Protected App-'"`-._,-'</div>
+      <div class="ps">· configure the target your WAF is shielding ⛨ ·</div>
 
       <div class="g2">
         <div class="hcard">
-          <div class="ct">proxy target</div>
+          <div class="ct"> ----> proxy target <----</div>
           <div class="host-row"><span class="host-label">IP / host</span><span class="host-val cyan" id="h-ip">127.0.0.1</span></div>
           <div class="host-row"><span class="host-label">Port</span>    <span class="host-val cyan" id="h-port">3000</span></div>
           <div class="host-row"><span class="host-label">Protocol</span><span class="host-val">HTTP</span></div>
@@ -404,12 +404,12 @@
         </div>
 
         <div class="hcard">
-          <div class="ct">runtime stats</div>
+          <div class="ct">----> runtime stats <----</div>
           <div class="bar"><span class="bl">Requests/min</span><div class="bt"><div class="bf" id="rpm-bar" style="width:62%;background:var(--cyan)"></div></div><span class="bc" id="rpm-val">—</span></div>
           <div class="bar"><span class="bl">Block rate</span>    <div class="bt"><div class="bf" style="width:0%;background:var(--red)"   id="blk-bar"></div></div><span class="bc" id="blk-val">—</span></div>
-          <div class="bar"><span class="bl">Avg latency</span>   <div class="bt"><div class="bf" style="width:15%;background:var(--amb)"></div></div><span class="bc">—</span></div>
+          <div class="bar"><span class="bl">Average latency</span>   <div class="bt"><div class="bf" style="width:15%;background:var(--amb)"></div></div><span class="bc">—</span></div>
           <div class="sep"></div>
-          <div class="ct">request throughput (simulated)</div>
+          <div class="ct">----> request throughput (simulated) <----</div>
           <div class="sparkline" id="home-spark"></div>
         </div>
       </div>
@@ -435,8 +435,8 @@
 
     <!-- OVERVIEW ─────────────────────────────────────── -->
     <div class="view" id="view-overview">
-      <div class="ph">Overview</div>
-      <div class="ps">Analytics · GET /waf/analytics</div>
+      <div class="ph">"`-._,-'"`-Analytics-'"`-._,-'</div>
+      <div class="ps">· analytics · overview ·</div>
 
       <div class="g4">
         <div class="card"><div class="ml">Total requests</div><div class="mv" id="ov-total">—</div><div class="ms nu" id="ov-total-sub"></div></div>
@@ -459,11 +459,11 @@
 
     <!-- LIVE TRAFFIC ─────────────────────────────────── -->
     <div class="view" id="view-traffic">
-      <div class="ph">Live traffic</div>
-      <div class="ps">Real-time stream · GET /waf/network_logs</div>
+      <div class="ph">"`-._,-'"`-Live traffic-'"`-._,-'</div>
+      <div class="ps">· real-time network stream · </div>
       <div style="display:flex;align-items:center;gap:6px;padding:6px 10px;border:1px solid rgba(57,255,122,.2);border-radius:3px;background:rgba(57,255,122,.04);margin-bottom:10px;font-size:10px;color:var(--grn)">
         <div class="live-dot" style="background:var(--grn)"></div>
-        polling every 3s — newest entries at top
+        polling every 3s >>> newest entries at top
       </div>
       <div class="card-lg" style="padding:0;margin-bottom:0">
         <div style="display:flex;padding:6px 8px;border-bottom:1px solid var(--br);background:var(--s2);gap:8px">
@@ -480,8 +480,8 @@
 
     <!-- WAF RULES ────────────────────────────────────── -->
     <div class="view" id="view-rules">
-      <div class="ph">WAF rules</div>
-      <div class="ps">Manage detection rules · GET /waf/rules · POST /waf/rules</div>
+      <div class="ph">"`-._,-'"`-Firewall Rules-'"`-._,-'</div>
+      <div class="ps">· Manage detection rules · </div>
       <div class="row-filter">
         <input type="text" id="rsearch" placeholder="Filter by name..." oninput="filterR()">
         <select id="rzone"   onchange="filterR()">
@@ -514,8 +514,8 @@
 
     <!-- ACTIONS LOG ──────────────────────────────────── -->
     <div class="view" id="view-actions">
-      <div class="ph">Actions log</div>
-      <div class="ps">Every firewall event · GET /waf/actions</div>
+      <div class="ph">"`-._,-'"`-Actions-'"`-._,-'</div>
+      <div class="ps">· all firewall events · </div>
       <div class="card-lg" style="padding:0;margin-bottom:0">
         <table style="table-layout:fixed">
           <colgroup>

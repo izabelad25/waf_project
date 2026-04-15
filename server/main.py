@@ -64,10 +64,15 @@ proxy_app.include_router(proxy_router)
 @dashboard_app.on_event("startup")
 async def startup_listener():
     asyncio.create_task(log_background_listener())
-    print("FIREWALL log batcher ACTIVE :P")
+    print(r"""             +.+"+.+"+.+"+.+"+.+"+.+""")
+    print(r"""+.+"+.+"+.+"FIREWALL log batcher ACTIVE "+.+"+.+"+.+""")
+    print(r"""             +.+"+.+"+.+"+.+"+.+"+.+""")
+    
 
     asyncio.create_task(analyzer())
-    print("Log Analyzer active! Dale!")
+    print(r"""              +.+"+.+"+.+"+.+"+.+"+.+""")
+    print(r"""+.+"+.+"+.+"FIREWALL log analyzer ACTIVE "+.+"+.+"+.+""")
+    print(r"""              +.+"+.+"+.+"+.+"+.+"+.+""")
 
 
 # 2 SERVERS LAUNCHER
@@ -89,11 +94,27 @@ async def main():
     dashboard_server = uvicorn.Server(dashboard_config)
     proxy_server = uvicorn.Server(proxy_config)
 
-    print("#"*55)
-    print(" FIREBALL ")
-    print(f"  Dashboard  ->  http://127.0.0.1:8000")
-    print(f"  Proxy      ->  http://127.0.0.1:8080  (point your app here)")
-    print("#" * 55)
+    
+    
+    print(r"""
+                     ___________
+                    ||"+.+"+.+"||            _______
+                    ||         ||           | _____ |
+                    ||FIREWALL.||           ||*____||
+                    ||__"+.+"+_||           |  ___  |
+                    |  + = = +  |           | |___*||
+                        _|_|_   \           |       |
+                       (_____)   \          |       |
+                                  \    ___  | ~WEB  |
+                           ______  \__/   \_|       |
+                          |   _  |      _/  |       |
+                          |  ( ) |     /    |_______|
+                          |___|__|    /         
+                               \_____/
+                    """)
+    print(f"  Firewall Dashboard  ->  http://127.0.0.1:8000")
+    print(f"  Proxy      ->  http://127.0.0.1:8080")
+    
 
 
     await asyncio.gather(
@@ -103,5 +124,6 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+    
 
 
