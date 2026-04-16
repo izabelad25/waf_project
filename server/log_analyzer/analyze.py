@@ -4,7 +4,7 @@ from datetime import datetime
 from db.init_db import db, CACHE_IPS
 from db.logger import firewall_actions_buffer
 from db.init_db import add_new_rule
-from alert import sendMail
+from .alert import sendMail
 
 def block_and_log(ip: str, trigger: str, reason: str, current_time):
         CACHE_IPS.add(ip)
@@ -20,7 +20,6 @@ def block_and_log(ip: str, trigger: str, reason: str, current_time):
 
 async def analyzer():
     
-
     #every threath has a specific query 
     #format == label, query, block threshold, template reason, label for trigger 
 

@@ -1,11 +1,14 @@
 import aiosmtplib 
 from email.message import EmailMessage
+import os
+from dotenv import load_dotenv
+load_dotenv()
 
 FROM = 'firewallapplicenta@gmail.com'
 TO = 'dumitru.izzabela@gmail.com'
 
 #pass !! atentie sa nu lasi asta aici
-PASSWORD = ""
+PASSWORD = os.getenv("MAIL_APP_PASS")
 
 async def sendMail(subject: str, text: str):
     

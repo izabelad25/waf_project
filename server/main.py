@@ -5,6 +5,7 @@ import uvicorn
 #env
 import os
 from dotenv import load_dotenv
+load_dotenv()
 
 #services
 from fastapi import FastAPI
@@ -79,6 +80,8 @@ async def startup_listener():
     print(r"""+.+"+.+"+.+"FIREWALL log analyzer ACTIVE "+.+"+.+"+.+""")
     print(r"""              +.+"+.+"+.+"+.+"+.+"+.+""")
 
+    #await sendMail("WAF ALERT", "NEW -->  test detected ")
+
 
 # 2 SERVERS LAUNCHER
 async def main():
@@ -129,7 +132,7 @@ async def main():
         proxy_server.serve(),
     )
 
-    await sendMail("WAF ALERT", "NEW -->  test detected ")
+    
 
 if __name__ == "__main__":
     asyncio.run(main())
