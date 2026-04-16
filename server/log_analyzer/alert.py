@@ -4,8 +4,13 @@ import os
 from dotenv import load_dotenv
 load_dotenv()
 
+import json
+
+with open('waf_config.json', 'r') as file:
+    data = json.load(file)
+
 FROM = 'firewallapplicenta@gmail.com'
-TO = 'dumitru.izzabela@gmail.com'
+TO = data["alert_email"] 
 
 #pass !! from env
 PASSWORD = os.getenv("MAIL_APP_PASS")

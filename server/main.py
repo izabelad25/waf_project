@@ -24,6 +24,7 @@ from routes.waf_rules import rule_router
 from routes.network_logs import logs_router
 from routes.waf_actions_log import waf_actions_router
 from routes.reverse_proxy import proxy_router
+from routes.waf_config import config_router, init_proxy_state
 
 
 
@@ -43,6 +44,7 @@ dashboard_app.add_middleware(
 dashboard_app.include_router(rule_router)
 dashboard_app.include_router(logs_router)
 dashboard_app.include_router(waf_actions_router)
+dashboard_app.include_router(config_router)
 
 dashboard_app.mount("/client", StaticFiles(directory="client"), name="client")
 
@@ -69,6 +71,8 @@ proxy_app.include_router(proxy_router)
 
 @dashboard_app.on_event("startup")
 async def startup_listener():
+    init_proxy_state()
+
     asyncio.create_task(log_background_listener())
     print(r"""             +.+"+.+"+.+"+.+"+.+"+.+""")
     print(r"""+.+"+.+"+.+"FIREWALL log batcher ACTIVE "+.+"+.+"+.+""")
@@ -80,14 +84,14 @@ async def startup_listener():
     print(r"""+.+"+.+"+.+"FIREWALL log analyzer ACTIVE "+.+"+.+"+.+""")
     print(r"""              +.+"+.+"+.+"+.+"+.+"+.+""")
 
-    #await sendMail("WAF ALERT", "NEW -->  test detected ")
+    await sendMail("WAF ALERT", "NEW -->  test detected ")
 
-    await start_guard(3000) #direct access to port 3000 denied
+    #await start_guard(3000) #direct access to port 3000 denied
 
 
 @dashboard_app.on_event("shutdown")
 async def shutdown_listener():
-    await stop_guard()
+    #await stop_guard()
     print("F i r e b a l l #### shutdown")
     
 
@@ -140,7 +144,6 @@ async def main():
         proxy_server.serve(),
     )
 
-    
 
 if __name__ == "__main__":
     asyncio.run(main())

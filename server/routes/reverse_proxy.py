@@ -13,13 +13,17 @@ import time
 from db.init_db import CACHE_IPS, CACHE_REGEX
 from db.logger import activity_logs_buffer, firewall_actions_buffer
 
+#proxy state from waf config
+from .waf_config import PROXY_STATE
+
 
 proxy_router = APIRouter()
 
 # target app URL ==> trb variabila globala env
 #PORT 3000 ==> protected app port
-target_URL = "http://localhost:3000"
-client = httpx.AsyncClient(base_url=target_URL)
+
+# target_URL = "http://localhost:3000"
+# client = httpx.AsyncClient(base_url=target_URL)
 
 # Rules that must be evaluated against the RAW (un-decoded) path/query,
 # because their entire purpose is to detect encoding tricks.
@@ -158,11 +162,23 @@ async def reverse_proxy(request: Request, path: str):
 
     # FORWARD clean traffic to the protected app
      
-    # Always forward the ORIGINAL raw URL — never the decoded version.
-    # The protected app expects what the client actually sent.
+    # Always forward the ORIGINAL raw URL never the decoded version
+    # The protected app expects what the client actually sent
 
-    raw_uri = raw_path
+    #live client from proxy state used
+    client = PROXY_STATE.get("client")
 
+    if client is None:
+        return JSONResponse(
+            {"error":"WAF not configured! Visit the home page first:)"},
+            status_code=503
+        )
+    
+    cfg = PROXY_STATE.get("config", {})
+    target_URL = f"http://{cfg.get('target_host', '127.0.0.1')}:{cfg.get('target_port', 3000)}"
+    
+    raw_uri = raw_path + (f"?{raw_query}")
+    
     if raw_query:
         raw_uri += f"?{raw_query}"
     
@@ -175,26 +191,27 @@ async def reverse_proxy(request: Request, path: str):
     # Build the outgoing request.
     # For methods with a body we pass body_bytes directly (already read above).
     # For methods without a body we stream from the original request object.
+    try:
 
-    if method in ("POST", "PUT", "PATCH"):
-        target_req = client.build_request(
-            method, url, headers=headers,
-            content=body_bytes          # bytes, not a stream (simplitate + sigurata)
-        )
-    else:
-        target_req = client.build_request(
-            method, url, headers=headers,
-            content=request.stream()    # stream passthrough for GET/HEAD/etc.
-        )
+        if method in ("POST", "PUT", "PATCH"):
+            target_req = client.build_request(
+                method, url, headers=headers,
+                content=body_bytes          # bytes, not a stream (simplitate + sigurata)
+            )
+        else:
+            target_req = client.build_request(
+                method, url, headers=headers,
+                content=request.stream()    # stream passthrough for GET/HEAD/etc.
+            )
 
     #  send & stream back the response 
-    try:
         target_resp = await client.send(target_req, stream=True)
         status_code = target_resp.status_code
+
     except httpx.ConnectError:
         status_code = 502
         return JSONResponse(
-            {"error": f"WAF could not connect to protected app at {target_URL}"},
+            {"error": f"WAF could not reach target at {target_URL}"},
             status_code=502
         )
 
