@@ -2,6 +2,10 @@
 import asyncio
 import uvicorn
 
+#env
+import os
+from dotenv import load_dotenv
+
 #services
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
@@ -11,7 +15,8 @@ from fastapi.middleware.cors import CORSMiddleware
 #background services
 from db.logger import log_background_listener
 from log_analyzer.analyze import analyzer
-
+#alert sender test
+from log_analyzer.alert import sendMail
 
 #routes
 from routes.waf_rules import rule_router
@@ -114,16 +119,21 @@ async def main():
                     """)
     print(f"  Firewall Dashboard  ->  http://127.0.0.1:8000")
     print(f"  Proxy      ->  http://127.0.0.1:8080")
+
+    #test email alert
     
-
-
+    
+    
     await asyncio.gather(
         dashboard_server.serve(),
         proxy_server.serve(),
     )
 
+    await sendMail("WAF ALERT", "NEW -->  test detected ")
+
 if __name__ == "__main__":
     asyncio.run(main())
+    
     
 
 

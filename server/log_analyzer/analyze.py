@@ -4,6 +4,7 @@ from datetime import datetime
 from db.init_db import db, CACHE_IPS
 from db.logger import firewall_actions_buffer
 from db.init_db import add_new_rule
+from alert import sendMail
 
 def block_and_log(ip: str, trigger: str, reason: str, current_time):
         CACHE_IPS.add(ip)
@@ -134,6 +135,7 @@ async def analyzer():
                            ip = row[0]
                            if ip not in CACHE_IPS:
                                 block_and_log(ip, trigger, reason(row), current_time)
+                                await sendMail("WAF ALERT", "NEW --> " + reason(row) + "detected " + current_time + "\n IP " + ip + "blocked! ")
                 except Exception as e:
                     print(f"[ERR analyzer][{check_name}] query failed = {e}")
 
