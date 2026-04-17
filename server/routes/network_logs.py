@@ -53,4 +53,11 @@ async def get_log_stats():
     }
 
 
-
+#debug
+@logs_router.get("/waf/debug")
+async def debug():
+    from db.logger import activity_logs_buffer
+    from db.init_db import db
+    in_buffer = len(activity_logs_buffer)
+    in_db = db.execute("SELECT COUNT(*) FROM activity_logs").fetchone()[0]
+    return {"buffer_size": in_buffer, "db_rows": in_db}

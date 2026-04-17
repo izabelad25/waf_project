@@ -1,6 +1,7 @@
 #server
 import asyncio
 import uvicorn
+import httpx
 
 #env
 import os
@@ -15,7 +16,6 @@ from fastapi.middleware.cors import CORSMiddleware
 
 #background services
 from db.logger import log_background_listener
-from port_bind import start_guard, stop_guard
 from log_analyzer.analyze import analyzer
 from log_analyzer.alert import sendMail
 
@@ -24,8 +24,11 @@ from routes.waf_rules import rule_router
 from routes.network_logs import logs_router
 from routes.waf_actions_log import waf_actions_router
 from routes.reverse_proxy import proxy_router
-from routes.waf_config import config_router, init_proxy_state
+from routes.waf_config import config_router, init_proxy_state, load_config, save_config, PROXY_STATE
 
+#port binding + setup
+from port_config import get_internal_port, is_port_free, print_instructions
+import sys
 
 
 #UI dashboard app  PORT 8000
@@ -73,75 +76,76 @@ proxy_app.include_router(proxy_router)
 async def startup_listener():
     init_proxy_state()
 
-    asyncio.create_task(log_background_listener())
-    print(r"""             +.+"+.+"+.+"+.+"+.+"+.+""")
-    print(r"""+.+"+.+"+.+"FIREWALL log batcher ACTIVE "+.+"+.+"+.+""")
-    print(r"""             +.+"+.+"+.+"+.+"+.+"+.+""")
-    
+    from db.log_bridge import start_log_receiver
 
+    asyncio.create_task(start_log_receiver())
+   
     asyncio.create_task(analyzer())
-    print(r"""              +.+"+.+"+.+"+.+"+.+"+.+""")
-    print(r"""+.+"+.+"+.+"FIREWALL log analyzer ACTIVE "+.+"+.+"+.+""")
-    print(r"""              +.+"+.+"+.+"+.+"+.+"+.+""")
+
+    print(r"""       +.+"+.+"+.+"+.+"+.+"+.+""")
+    print(r"""+.+"+.+"+.+"FIREWALL ACTIVE "+.+"+.+"+.+""")
+    print(r"""       +.+"+.+"+.+"+.+"+.+"+.+""")
 
     #await sendMail("WAF ALERT", "NEW -->  test detected ")
 
-    #await start_guard(3000) #direct access to port 3000 denied
-
-
+    
 @dashboard_app.on_event("shutdown")
 async def shutdown_listener():
     #await stop_guard()
     print("F i r e b a l l #### shutdown")
     
-
 # 2 SERVERS LAUNCHER
 async def main():
+    cfg = load_config()
+    public_port = cfg.get("public_port", 3000)        
+    internal_port = get_internal_port(public_port)      
+    dashboard_port = 8000
+
+    if not is_port_free(public_port):
+        print(f"\nPort {public_port} is already in use.")
+        print(f"your app is probably still running on {public_port}...")
+        print(f"please read the instructions :) ")
+        print(f"      WAF needs to own :{public_port} to intercept traffic.\n")
+        sys.exit(1)
+ 
+    print_instructions(public_port, internal_port)
+
+    cfg["target_port"] = internal_port
+    cfg["target_host"] = "localhost"
+
+    
+    save_config(cfg)
+    PROXY_STATE["config"] = cfg
+    PROXY_STATE["client"] = httpx.AsyncClient(
+        base_url=f"http://127.0.0.1:{internal_port}", timeout=15.0
+    )
+
+
+
     dashboard_config = uvicorn.Config(
         app=dashboard_app,
         host="127.0.0.1",
         port=8000,
-        log_level="info",
+        log_level="warning",
     )
 
     proxy_config = uvicorn.Config(
         app=proxy_app,
         host="127.0.0.1",
         port=8080,
-        log_level="info",
+        log_level="warning",
     )
 
-    dashboard_server = uvicorn.Server(dashboard_config)
-    proxy_server = uvicorn.Server(proxy_config)
-
-    
-    
-    print(r"""
-                     ___________
-                    ||"+.+"+.+"||            _______
-                    ||         ||           | _____ |
-                    ||FIREWALL.||           ||*____||
-                    ||__"+.+"+_||           |  ___  |
-                    |  + = = +  |           | |___*||
-                        _|_|_   \           |       |
-                       (_____)   \          |       |
-                                  \    ___  | ~WEB  |
-                           ______  \__/   \_|       |
-                          |   _  |      _/  |       |
-                          |  ( ) |     /    |_______|
-                          |___|__|    /         
-                               \_____/
-                    """)
-    print(f"  Firewall Dashboard  ->  http://127.0.0.1:8000")
-    print(f"  Proxy               ->  http://127.0.0.1:8080")
+   
+    print(f" Open Firewall Dashboard   ->  http://127.0.0.1:8000")
+    #print(f"  Proxy               ->  http://127.0.0.1:8080")
 
     #test email alert
     
-    
-    
+
     await asyncio.gather(
-        dashboard_server.serve(),
-        proxy_server.serve(),
+        uvicorn.Server(dashboard_config).serve(),
+        uvicorn.Server(proxy_config).serve(),
     )
 
 
@@ -150,4 +154,7 @@ if __name__ == "__main__":
     
     
 
-
+#workflow
+# 1. python main.py
+# 2. PORT=3001 npm start === app starts on internal port
+# 3. open localhost:3000 (waf intercepts ++ app works normally)

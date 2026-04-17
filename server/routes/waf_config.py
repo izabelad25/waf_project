@@ -1,6 +1,8 @@
 import json
 import os
 import httpx
+import asyncio
+import socket
 
 from fastapi import APIRouter
 from fastapi.responses import JSONResponse
@@ -15,9 +17,13 @@ CONFIG_PATH = os.path.join(os.path.dirname(_BASE), "waf_config.json")
 
 _DEFAULTS = {
     "target_host": "127.0.0.1",
-    "target_port": 3000,
+    "target_port": 3001, #internal port
+    "public_port": 3000, #used in browser (waf owns)
     "alert_email": "",
 }
+
+#proxy state and configuration
+PROXY_STATE: dict = {}
 
 #loading config file
 def load_config() -> dict:
@@ -35,8 +41,7 @@ def save_config(cfg: dict):
     with open(CONFIG_PATH, "w") as f:
         json.dump(cfg, f, indent=2)
 
-#proxy state and configuration
-PROXY_STATE: dict = {}
+
 
 def _build_client(host: str, port: int) -> httpx.AsyncClient:
     url = f"http://{host}:{port}"
@@ -50,8 +55,7 @@ def init_proxy_state():
 
 #configuration model for payloads
 class ConfigPayload(BaseModel):
-    target_host: str
-    target_port: int
+    public_port: int = 3000
     alert_email: str = ""
 
 #routes
@@ -59,55 +63,55 @@ class ConfigPayload(BaseModel):
 @config_router.get("/waf/config")
 async def get_config():
     cfg = PROXY_STATE.get("config", load_config())
-    return JSONResponse(cfg)
+    return JSONResponse({**cfg, "internal_port": cfg["target_port"]})
  
  
 @config_router.post("/waf/config")
 async def set_config(payload: ConfigPayload):
+    from port_config import get_internal_port
+    internal_port = get_internal_port(payload.public_port)
+ 
     cfg = {
-        "target_host": payload.target_host.strip(),
-        "target_port": payload.target_port,
-        "alert_email": payload.alert_email.strip(),
+        "target_host":  "127.0.0.1",
+        "target_port":  internal_port,
+        "public_port":  payload.public_port,
+        "alert_email":  payload.alert_email.strip(),
     }
  
-    old_client = PROXY_STATE.get("client")
+    old = PROXY_STATE.get("client")
     PROXY_STATE["config"] = cfg
-    PROXY_STATE["client"] = _build_client(cfg["target_host"], cfg["target_port"])
- 
-    # close old client in background
-    if old_client:
-        try:
-            await old_client.aclose()
-        except Exception:
-            pass
+    PROXY_STATE["client"] = _build_client("127.0.0.1", internal_port)
+    if old:
+        try: await old.aclose()
+        except: pass
  
     save_config(cfg)
- 
-    return JSONResponse({"ok": True, "target": f"http://{cfg['target_host']}:{cfg['target_port']}"})
+    return JSONResponse({
+        "ok": True,
+        "public_port":   payload.public_port,
+        "internal_port": internal_port,
+        "message": f"WAF owns :{payload.public_port} your app must run on :{internal_port}",
+    })
 
 
 @config_router.get("/waf/config/reachable")
 async def check_reachable():
-    """ TCP probe — called by the UI to update the status bar. god help me"""
+    #TCP probe called by the UI to update the status bar. god help me 
     cfg = PROXY_STATE.get("config", load_config())
-    import asyncio, socket
  
     host = cfg["target_host"]
-    port = cfg["target_port"]
+    port = cfg["target_port"] #internal port btw
  
     loop = asyncio.get_event_loop()
     try:
         await asyncio.wait_for(
-            loop.run_in_executor(None, lambda: _tcp_probe(host, port)),
-            timeout=1.5,
+            loop.run_in_executor(None, lambda: _tcp_probe(host, port)), timeout=1.5
         )
-        return JSONResponse({"reachable": True, "target": f"{host}:{port}"})
-    except Exception:
-        return JSONResponse({"reachable": False, "target": f"{host}:{port}"})
-
-def _tcp_probe(host: str, port: int):
-    import socket
-    s = socket.socket()
-    s.settimeout(1.0)
-    s.connect((host, port))
-    s.close()
+        return JSONResponse({"reachable": True,  "internal_port": port, "public_port": cfg["public_port"]})
+    except:
+        return JSONResponse({"reachable": False, "internal_port": port, "public_port": cfg["public_port"]})
+ 
+ 
+def _tcp_probe(host, port):
+    s = socket.socket(); s.settimeout(1.0); s.connect((host, port)); s.close()
+ 

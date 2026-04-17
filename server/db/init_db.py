@@ -1,10 +1,15 @@
 import duckdb
 import regex 
+import os
+import sys
+
+_BASE   = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
+DB_PATH = os.path.join(os.path.dirname(_BASE), "fireball.db")
 
 
 print("Initializing DuckBD...")
 
-db = duckdb.connect('waf_database.duckdb')
+db = duckdb.connect(DB_PATH)
 
 
 db.execute("""

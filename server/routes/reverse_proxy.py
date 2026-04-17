@@ -11,7 +11,8 @@ from datetime import datetime
 import time
 
 from db.init_db import CACHE_IPS, CACHE_REGEX
-from db.logger import activity_logs_buffer, firewall_actions_buffer
+#from db.logger import activity_logs_buffer, firewall_actions_buffer
+from db.logger import log_activity, log_action
 
 #proxy state from waf config
 from .waf_config import PROXY_STATE
@@ -32,8 +33,8 @@ RAW_PATH_RULES  = {1, 32}   # Block Double URL Encoding (PATH)
 RAW_QUERY_RULES = {3, 33}   # Block Double URL Encoding (QUERY)
 
 #log only function for log only rules
-def _log_only(rule_id: int, trigger: str, request_id: str, timestamp):
-    firewall_actions_buffer.append((str(uuid.uuid4()), timestamp, request_id, rule_id, "LOG WARNING", trigger))
+async def _log_only(rule_id: int, trigger: str, request_id: str, timestamp):
+    await log_action(timestamp, request_id, rule_id, "LOG WARNING", trigger)
 
 
 # this prevents HTTP VERB TAMPERING
@@ -65,17 +66,12 @@ async def reverse_proxy(request: Request, path: str):
     query_string = urllib.parse.unquote(urllib.parse.unquote(raw_query))
 
     # helper: block & log 
-    def block_request(rule_id: int, trigger: str, reason: str):
+    async def block_request(rule_id: int, trigger: str, reason: str):
         print(f"[WAF BLOCK] IP={client_ip} | rule={rule_id} | trigger={trigger!r} | reason={reason}")
 
-        activity_logs_buffer.append((
-            request_id, timestamp, client_ip, method, full_path, 403, user_agent, 0.0
-        ))
-
-        firewall_actions_buffer.append((
-            str(uuid.uuid4()), timestamp, request_id,
-            rule_id, "BLOCK", trigger
-        ))
+        await log_activity(request_id, timestamp, client_ip, method,
+                           full_path, 403, user_agent, 0.0)
+        await log_action(timestamp, request_id, rule_id, "BLOCK", trigger)
 
         return JSONResponse({"error": "Access denied!"}, status_code=403)
 
@@ -84,7 +80,7 @@ async def reverse_proxy(request: Request, path: str):
 
     #  Check 1 = blocked IP 
     if client_ip in CACHE_IPS:
-        return block_request(0, client_ip, "Blocked IP by FIREWALL rule")
+        return await block_request(0, client_ip, "Blocked IP by FIREWALL rule")
 
     #  Check 2 = malicious PATH 
 
@@ -97,9 +93,9 @@ async def reverse_proxy(request: Request, path: str):
         match  = rule['pattern'].search(target)
         if match:
             if rule['action'] == 'BLOCK':
-                return block_request(rule['rule_id'], match.group(0), "Malicious path pattern detected")
+                return await block_request(rule['rule_id'], match.group(0), "Malicious path pattern detected")
             #LOG-only rules  
-            _log_only(rule['rule_id'], match.group(0), request_id, timestamp)
+            await _log_only(rule['rule_id'], match.group(0), request_id, timestamp)
 
     #  Check 3 = malicious QUERY STRING 
 
@@ -119,9 +115,9 @@ async def reverse_proxy(request: Request, path: str):
         
         if match:
             if rule['action'] == 'BLOCK':
-                return block_request(rule['rule_id'], match.group(0), "Malicious query string detected")
+                return await block_request(rule['rule_id'], match.group(0), "Malicious query string detected")
             
-            _log_only(rule['rule_id'], match.group(0), request_id, timestamp)
+            await _log_only(rule['rule_id'], match.group(0), request_id, timestamp)
 
 
     #  Check 4 = malicious HEADERS 
@@ -136,8 +132,8 @@ async def reverse_proxy(request: Request, path: str):
             match = rule['pattern'].search(merged_header)
             if match:
                 if rule['action'] == 'BLOCK':
-                    return block_request(rule['rule_id'], match.group(0), "Malicious HTTP header detected")
-                _log_only(rule['rule_id'], match.group(0), request_id, timestamp)
+                    return await block_request(rule['rule_id'], match.group(0), "Malicious HTTP header detected")
+                await _log_only(rule['rule_id'], match.group(0), request_id, timestamp)
 
     # Check 5 : malicious BODY 
 
@@ -157,8 +153,8 @@ async def reverse_proxy(request: Request, path: str):
                 match = rule['pattern'].search(body_string)
                 if match:
                     if rule['action'] == 'BLOCK':
-                        return block_request(rule['rule_id'], match.group(0), "Malicious payload in request body")
-                    _log_only(rule['rule_id'], match.group(0), request_id, timestamp)
+                        return await block_request(rule['rule_id'], match.group(0), "Malicious payload in request body")
+                    await _log_only(rule['rule_id'], match.group(0), request_id, timestamp)
 
     # FORWARD clean traffic to the protected app
      
@@ -217,10 +213,8 @@ async def reverse_proxy(request: Request, path: str):
 
     response_time_ms = round((time.time() - start_time) * 1000, 2)
 
-    activity_logs_buffer.append((
-        request_id, timestamp, client_ip, method, full_path,
-        status_code, user_agent, response_time_ms
-    ))
+    await log_activity(request_id, timestamp, client_ip, method,
+                       full_path, status_code, user_agent, response_time_ms)
 
     return StreamingResponse(
         target_resp.aiter_raw(),
