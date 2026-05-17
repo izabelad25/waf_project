@@ -20,7 +20,7 @@ def block_and_log(ip: str, trigger: str, reason: str, current_time):
 
 async def analyzer():
     
-    #every threath has a specific query 
+    #every threat has a specific query 
     #format == label, query, block threshold, template reason, label for trigger 
 
     analyzer_query_list = [
