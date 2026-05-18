@@ -18,6 +18,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from db.logger import log_background_listener
 from log_analyzer.analyze import analyzer
 from log_analyzer.alert import sendMail
+from db.archiver_db import archiver
 
 #routes
 from routes.waf_rules import rule_router
@@ -78,6 +79,7 @@ async def startup_listener():
 
     asyncio .create_task(log_background_listener())
     asyncio.create_task(analyzer())
+    asyncio.create_task(archiver())
 
     print(r"""       +.+"+.+"+.+"+.+"+.+"+.+""")
     print(r"""+.+"+.+"+.+"FIREWALL ACTIVE "+.+"+.+"+.+""")
