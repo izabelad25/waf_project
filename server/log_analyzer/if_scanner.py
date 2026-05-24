@@ -1,0 +1,139 @@
+import os
+import numpy as np
+import pandas as pd
+
+import importlib.util, sys
+ 
+_HERE = os.path.dirname(os.path.abspath(__file__))
+ 
+spec = importlib.util.spec_from_file_location(
+    "isoForestModel",
+    os.path.join(_HERE, "isoForestModel.py")
+)
+_mod = importlib.util.module_from_spec(spec)
+spec.loader.exec_module(_mod)
+
+#obiectele antrenate pe train set
+_ISO    = _mod.iso_forest
+_OHE    = _mod.ohe
+_SCALER = _mod.scaler
+
+#statisticile pe care e antrenat
+_TRAIN_PATH_Q3        = _mod.train_path_q3
+_TRAIN_PATH_IQR       = _mod.train_path_iqr
+_TRAIN_RT_Q3          = _mod.train_rt_q3
+_TRAIN_RT_IQR         = _mod.train_rt_iqr
+_TRAIN_URL_FREQ       = _mod.train_url_freq
+_TRAIN_URL_FREQ_Q1    = _mod.train_url_freq_q1
+_TRAIN_UA_FREQ        = _mod.train_ua_freq
+_TRAIN_UA_FREQ_Q1     = _mod.train_ua_freq_q1
+_TRAIN_URL_LEN_Q3     = _mod.train_url_len_q3
+_TRAIN_URL_LEN_IQR    = _mod.train_url_len_iqr
+_TRAIN_IP_UNIQ_PATHS  = _mod.train_ip_uniq_paths
+_TRAIN_IP_UNIQ_Q3     = _mod.train_ip_uniq_q3
+_TRAIN_IP_UNIQ_IQR    = _mod.train_ip_uniq_iqr
+_VALID_NUM            = _mod.valid_numeric_cols
+
+def run_scan(db) -> dict:
+   #preia datele din db si ruleaza modelul pe date
+    rows = db.execute(
+        """
+        SELECT log_id, timestamp, client_ip, http_method,
+               request_path, status_code, user_agent, response_time_ms
+        FROM activity_logs
+        ORDER BY timestamp DESC
+        LIMIT 5000
+        """
+    ).fetchall()
+ 
+    if len(rows) < 50:
+        return {"error": "not_enough_data", "count": len(rows)}
+ 
+    df = pd.DataFrame(rows, columns=[
+        "log_id", "timestamp", "client_ip", "http_method",
+        "request_path", "status_code", "user_agent", "response_time_ms"
+    ])
+ 
+    df["timestamp"]        = pd.to_datetime(df["timestamp"], errors="coerce")
+    df["response_time_ms"] = pd.to_numeric(df["response_time_ms"], errors="coerce").fillna(0)
+    df["status_code"]      = pd.to_numeric(df["status_code"], errors="coerce").fillna(200).astype(int)
+    df["request_path"]     = df["request_path"].fillna("/").astype(str)
+    df["user_agent"]       = df["user_agent"].fillna("").astype(str)
+    df["client_ip"]        = df["client_ip"].fillna("").astype(str)
+    df = df.dropna(subset=["request_path", "user_agent", "response_time_ms"]).reset_index(drop=True)
+ 
+    #redenumire coloane
+    df = df.rename(columns={
+        "request_path":     "field_b",
+        "user_agent":       "field_d",
+        "response_time_ms": "field_e",
+    })
+
+    df["field_c"] = df["status_code"].apply(lambda s: "BLOCK" if int(s) == 403 else "ALLOW")
+ 
+    #adaugare features
+    df = _mod.add_features(
+        df,
+        _TRAIN_PATH_Q3,  _TRAIN_PATH_IQR,
+        _TRAIN_RT_Q3,    _TRAIN_RT_IQR,
+        _TRAIN_URL_FREQ, _TRAIN_URL_FREQ_Q1,
+        _TRAIN_UA_FREQ,  _TRAIN_UA_FREQ_Q1,
+        _TRAIN_URL_LEN_Q3, _TRAIN_URL_LEN_IQR,
+        _TRAIN_IP_UNIQ_PATHS, _TRAIN_IP_UNIQ_Q3, _TRAIN_IP_UNIQ_IQR,
+    )
+ 
+    # ohe si fit transform antrenate din model
+    cat_cols = ["field_b", "field_d"]
+    enc_arr  = _OHE.transform(df[cat_cols])
+    enc_df   = pd.DataFrame(enc_arr, columns=_OHE.get_feature_names_out(cat_cols), index=df.index)
+    num_df   = pd.DataFrame(_SCALER.transform(df[_VALID_NUM].fillna(0)), columns=_VALID_NUM, index=df.index)
+    X        = pd.concat([enc_df, num_df], axis=1)
+ 
+    #utilizare model
+    scores  = _ISO.decision_function(X)
+    #threshold default 0.00
+    predict = np.where(scores < 0, -1, 1)
+    
+    df["if_score"]   = scores
+    df["is_anomaly"] = (predict == -1).astype(int)
+ 
+    #rezultate pt dashboard
+    anomalies = df[df["is_anomaly"] == 1].sort_values("if_score").head(100)
+ 
+    normals   = df[df["is_anomaly"] == 0].sample(min(500, int((df["is_anomaly"]==0).sum())), random_state=42)
+    scatter   = pd.concat([normals, anomalies])
+ 
+    scatter_points = [
+        {
+            "x":       float(r["if_score"]),
+            "y":       float(r["field_e"]),
+            "anomaly": int(r["is_anomaly"]),
+            "ip":      str(r["client_ip"]),
+            "path":    str(r["field_b"])[:60],
+        }
+        for _, r in scatter.iterrows()
+    ]
+ 
+    anomaly_list = [
+        {
+            "log_id":           str(r["log_id"]),
+            "timestamp":        r["timestamp"].isoformat() if pd.notna(r["timestamp"]) else None,
+            "client_ip":        str(r["client_ip"]),
+            "http_method":      str(r["http_method"]),
+            "request_path":     str(r["field_b"]),
+            "status_code":      int(r["status_code"]),
+            "user_agent":       str(r["field_d"]),
+            "response_time_ms": float(r["field_e"]),
+            "if_score":         round(float(r["if_score"]), 5),
+            "ioc_count":        int(r["ioc_count"]),
+            "is_blocked":       int(r["is_blocked"]),
+        }
+        for _, r in anomalies.iterrows()
+    ]
+ 
+    return {
+        "total_scanned":   int(len(df)),
+        "anomalies_found": int(df["is_anomaly"].sum()),
+        "scatter_points":  scatter_points,
+        "anomalies":       anomaly_list,
+    }

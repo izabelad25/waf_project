@@ -84,7 +84,7 @@ default_rules = [
     
     (9, 'Block DIRECTORY Traversal to Sensitive Files (Headers)', 'REGEX_MATCH', 'HEADERS', 
      r'(?i)(?:^|/)(?:\.env|etc/(?:passwd|shadow|group|hosts|mysql)|windows/win\.ini|proc/self/environ|run/secrets/kubernetes)', 
-     'BLOCK')
+     'BLOCK'),
 
     (10, 'Block DIRECTORY Absolute Traversal (Windows) (Headers)', 'REGEX_MATCH', 'HEADERS', 
      r'(?i)(?:c:[/\\](?:windows|inetpub|sysprep|system32)|\\\\(?:localhost|[\w.-]+)\\[a-z$])', 'BLOCK'),

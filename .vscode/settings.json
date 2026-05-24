@@ -1,0 +1,20 @@
+{
+    "workbench.editorAssociations": {
+        "*.copilotmd": "vscode.markdown.preview.editor",
+        "*.sqlite": "default",
+        "*.parquet": "duckdb.dataFileViewer",
+        "*.csv": "duckdb.dataFileViewer",
+        "*.tsv": "duckdb.dataFileViewer",
+        "*.xlsx": "duckdb.dataFileViewer"
+    },
+    "duckdb.databases": [
+        {
+            "alias": "fireball",
+            "type": "file",
+            "path": "c:\\Users\\Izabela\\Documents\\GitHub\\waf_test\\server\\fireball.db",
+            "readOnly": true,
+            "attached": false
+        }
+    ],
+    "duckdb.defaultDatabase": "fireball"
+}

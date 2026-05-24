@@ -26,7 +26,7 @@ from routes.network_logs import logs_router
 from routes.waf_actions_log import waf_actions_router
 from routes.reverse_proxy import proxy_router
 from routes.waf_config import config_router, init_proxy_state, load_config, save_config, PROXY_STATE
-
+from routes.if_scan import if_scan_router
 #port binding + setup
 from port_config import get_internal_port, is_port_free, print_instructions
 import sys
@@ -49,6 +49,7 @@ dashboard_app.include_router(rule_router)
 dashboard_app.include_router(logs_router)
 dashboard_app.include_router(waf_actions_router)
 dashboard_app.include_router(config_router)
+dashboard_app.include_router(if_scan_router)
 
 dashboard_app.mount("/client", StaticFiles(directory="client"), name="client")
 

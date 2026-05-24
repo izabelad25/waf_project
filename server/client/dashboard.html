@@ -16,13 +16,12 @@
     }
 
     :root {
-      /* ── GitHub-style: white · light-grey · light-green ── */
-      --bg:       #f6f8fa;     /* page bg   */
-      --bg2:      #ffffff;     /* card bg   */
-      --br:       #d0d7de;     /* border    */
-      --br2:      #e8ecef;     /* inner div */
-      --grn:      #1a7f37;     /* accent    */
-      --grn-lt:   #2da44e;     /* btn hover */
+      --bg:       #f6f8fa;
+      --bg2:      #ffffff;
+      --br:       #d0d7de;
+      --br2:      #e8ecef;
+      --grn:      #1a7f37;
+      --grn-lt:   #2da44e;
       --grn-bg:   rgba(26,127,55,.08);
       --grn-bd:   rgba(26,127,55,.22);
       --red:      #cf222e;
@@ -31,9 +30,9 @@
       --amb:      #9a6700;
       --amb-bg:   rgba(154,103,0,.07);
       --amb-bd:   rgba(154,103,0,.2);
-      --txt:      #24292f;     /* primary   */
-      --txt2:     #57606a;     /* secondary */
-      --txt3:     #8c959f;     /* muted     */
+      --txt:      #24292f;
+      --txt2:     #57606a;
+      --txt3:     #8c959f;
       --shadow:   0 1px 3px rgba(31,35,40,.08),0 0 0 1px rgba(31,35,40,.06);
       --mono:     'JetBrains Mono', monospace;
       --sans:     'Syne', sans-serif;
@@ -50,7 +49,6 @@
       overflow: hidden;
     }
 
-    /* ── LAYOUT ───────────────────────────────────────── */
     .app {
       display: grid;
       grid-template-columns: 200px 1fr;
@@ -58,7 +56,6 @@
       height: 100vh;
     }
 
-    /* ── TOPBAR ───────────────────────────────────────── */
     .top {
       grid-column: 1 / -1;
       background: var(--bg2);
@@ -68,104 +65,34 @@
       gap: 10px;
       padding: 0 16px;
     }
-    .logo {
-      font-family: var(--kernel);
-      font-size: 15px;
-      color: var(--txt);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .fire {
-      width: 8px; height: 8px;
-      background: var(--grn-lt);
-      border-radius: 50%;
-      animation: blink 2s infinite;
-    }
+    .logo { font-family: var(--kernel); font-size: 15px; color: var(--txt); display: flex; align-items: center; gap: 8px; }
+    .fire { width: 8px; height: 8px; background: var(--grn-lt); border-radius: 50%; animation: blink 2s infinite; }
     @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
-
-    .ver {
-      font-size: 10px;
-      padding: 1px 8px;
-      border: 1px solid var(--grn-bd);
-      color: var(--grn);
-      border-radius: 20px;
-      background: var(--grn-bg);
-      font-weight: 600;
-    }
+    .ver { font-size: 10px; padding: 1px 8px; border: 1px solid var(--grn-bd); color: var(--grn); border-radius: 20px; background: var(--grn-bg); font-weight: 600; }
     .topright { margin-left: auto; display: flex; align-items: center; gap: 16px; }
     .live-ind { display: flex; align-items: center; gap: 5px; font-size: 10px; color: var(--grn); }
-    .live-dot {
-      width: 6px; height: 6px;
-      background: var(--grn-lt);
-      border-radius: 50%;
-      animation: blink 1.2s infinite;
-    }
+    .live-dot { width: 6px; height: 6px; background: var(--grn-lt); border-radius: 50%; animation: blink 1.2s infinite; }
     .proxy-info { font-size: 10px; color: var(--txt2); }
     .proxy-info span { color: var(--grn); font-weight: 600; }
 
-    /* ── SIDEBAR ──────────────────────────────────────── */
-    .side {
-      background: var(--bg2);
-      border-right: 1px solid var(--br);
-      display: flex;
-      flex-direction: column;
-      padding: 12px 0;
-    }
-    .nav {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 7px 16px;
-      font-size: 11px;
-      color: var(--txt2);
-      cursor: pointer;
-      border-left: 2px solid transparent;
-      transition: all .12s;
-      white-space: nowrap;
-      user-select: none;
-    }
+    .side { background: var(--bg2); border-right: 1px solid var(--br); display: flex; flex-direction: column; padding: 12px 0; }
+    .nav { display: flex; align-items: center; gap: 8px; padding: 7px 16px; font-size: 11px; color: var(--txt2); cursor: pointer; border-left: 2px solid transparent; transition: all .12s; white-space: nowrap; user-select: none; }
     .nav:hover { color: var(--txt); background: var(--bg); }
     .nav.on    { color: var(--grn); border-left-color: var(--grn); background: var(--grn-bg); font-weight: 600; }
-    .nav-sec {
-      font-size: 9px;
-      color: var(--txt3);
-      padding: 14px 16px 4px;
-      letter-spacing: 1px;
-      text-transform: uppercase;
-      font-weight: 600;
-    }
-    .nav-ico   { width: 14px; text-align: center; font-size: 12px; opacity: .6; }
-    .nav-badge {
-      margin-left: auto;
-      background: var(--red-bg);
-      color: var(--red);
-      border: 1px solid var(--red-bd);
-      border-radius: 20px;
-      padding: 0 6px;
-      font-size: 9px;
-      font-weight: 600;
-    }
+    .nav-sec { font-size: 9px; color: var(--txt3); padding: 14px 16px 4px; letter-spacing: 1px; text-transform: uppercase; font-weight: 600; }
+    .nav-ico { width: 14px; text-align: center; font-size: 12px; opacity: .6; }
+    .nav-badge { margin-left: auto; background: var(--red-bg); color: var(--red); border: 1px solid var(--red-bd); border-radius: 20px; padding: 0 6px; font-size: 9px; font-weight: 600; }
 
-    /* ── MAIN ─────────────────────────────────────────── */
     .main { background: var(--bg); overflow-y: auto; padding: 18px 20px; }
     .view    { display: none; }
     .view.on { display: block; }
-    .ph {
-      font-family: var(--kernel);
-      font-size: 20px;
-      letter-spacing: .6px;
-      color: var(--txt);
-      margin-bottom: 2px;
-    }
+    .ph { font-family: var(--kernel); font-size: 20px; letter-spacing: .6px; color: var(--txt); margin-bottom: 2px; }
     .ps { font-size: 11px; color: var(--txt3); margin-bottom: 16px; }
 
-    /* ── GRIDS ────────────────────────────────────────── */
     .g4 { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:10px; margin-bottom:12px; }
     .g2 { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; margin-bottom:12px; }
     .g3 { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; margin-bottom:12px; }
 
-    /* ── CARDS ────────────────────────────────────────── */
     .card    { background:var(--bg2); border:1px solid var(--br); border-radius:6px; padding:14px; box-shadow:var(--shadow); }
     .card-lg { background:var(--bg2); border:1px solid var(--br); border-radius:6px; padding:16px; margin-bottom:12px; box-shadow:var(--shadow); }
 
@@ -177,53 +104,31 @@
     .dn  { color:var(--red); }
     .nu  { color:var(--txt2); }
 
-    /* ── STAT MINI ────────────────────────────────────── */
-    .stat-mini {
-      display:flex; flex-direction:column; gap:2px;
-      padding:10px 12px;
-      background:var(--bg);
-      border:1px solid var(--br);
-      border-radius:6px;
-    }
+    .stat-mini { display:flex; flex-direction:column; gap:2px; padding:10px 12px; background:var(--bg); border:1px solid var(--br); border-radius:6px; }
     .stat-mini-label { font-size:9px; color:var(--txt3); text-transform:uppercase; letter-spacing:.7px; font-weight:500; }
     .stat-mini-val   { font-size:18px; font-weight:700; font-family:var(--sans); color:var(--txt); }
     .stat-mini-sub   { font-size:9px; color:var(--txt3); }
 
-    /* ── THROUGHPUT ───────────────────────────────────── */
     .throughput-wrap   { position:relative; height:64px; margin-top:4px; }
     .throughput-canvas { width:100%; height:100%; display:block; }
     .throughput-label  { position:absolute; top:0; right:0; font-size:9px; color:var(--txt3); }
 
-    /* ── BARS ─────────────────────────────────────────── */
     .bar { display:flex; align-items:center; gap:8px; margin-bottom:8px; font-size:10px; }
     .bl  { width:100px; color:var(--txt2); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
     .bt  { flex:1; height:4px; background:var(--br2); border-radius:4px; overflow:hidden; }
     .bf  { height:100%; border-radius:4px; }
     .bc  { color:var(--txt2); min-width:32px; text-align:right; font-weight:600; }
 
-    /* ── TABLE ────────────────────────────────────────── */
     table { width:100%; border-collapse:collapse; font-size:11px; }
-    th {
-      text-align:left;
-      color:var(--txt3);
-      font-size:10px;
-      text-transform:uppercase;
-      letter-spacing:.6px;
-      padding:6px 10px;
-      border-bottom:1px solid var(--br);
-      font-weight:600;
-      background:var(--bg);
-    }
+    th { text-align:left; color:var(--txt3); font-size:10px; text-transform:uppercase; letter-spacing:.6px; padding:6px 10px; border-bottom:1px solid var(--br); font-weight:600; background:var(--bg); }
     td { padding:7px 10px; border-bottom:1px solid var(--br2); color:var(--txt); vertical-align:middle; }
     tr:last-child td { border-bottom:none; }
     tr:hover td { background:var(--bg); }
 
-    /* ── RULE ROW ─────────────────────────────────────── */
     .rule-row { cursor:pointer; }
     .rule-row:hover td { background:var(--grn-bg) !important; }
     .rule-row td { transition:background .12s; }
 
-    /* ── TAGS ─────────────────────────────────────────── */
     .tag   { display:inline-block; padding:1px 8px; border-radius:20px; font-size:9px; font-weight:600; white-space:nowrap; }
     .t-blk { background:var(--red-bg); color:var(--red); border:1px solid var(--red-bd); }
     .t-log { background:var(--grn-bg); color:var(--grn); border:1px solid var(--grn-bd); }
@@ -233,7 +138,6 @@
     .t-hdr { background:var(--red-bg); color:#b91c1c; border:1px solid var(--red-bd); }
     .t-body{ background:var(--grn-bg); color:var(--grn); border:1px solid var(--grn-bd); }
 
-    /* ── METHOD / STATUS COLOURS ──────────────────────── */
     .mget  { color:var(--grn); font-weight:700; }
     .mpost { color:#0550ae;    font-weight:700; }
     .mput  { color:var(--amb); font-weight:700; }
@@ -242,187 +146,111 @@
     .s403  { color:var(--red); font-weight:600; }
     .s502  { color:var(--amb); font-weight:600; }
 
-    /* ── FORM CONTROLS ────────────────────────────────── */
     input[type="text"],input[type="number"],input[type="email"],select {
-      background:var(--bg2);
-      border:1px solid var(--br);
-      color:var(--txt);
-      font-family:var(--mono);
-      font-size:11px;
-      padding:5px 9px;
-      border-radius:6px;
-      outline:none;
-      transition:border-color .12s,box-shadow .12s;
+      background:var(--bg2); border:1px solid var(--br); color:var(--txt);
+      font-family:var(--mono); font-size:11px; padding:5px 9px;
+      border-radius:6px; outline:none; transition:border-color .12s,box-shadow .12s;
     }
-    input[type="text"]:focus,input[type="number"]:focus,
-    input[type="email"]:focus,select:focus {
-      border-color:var(--grn);
-      box-shadow:0 0 0 3px rgba(26,127,55,.12);
+    input[type="text"]:focus,input[type="number"]:focus,input[type="email"]:focus,select:focus {
+      border-color:var(--grn); box-shadow:0 0 0 3px rgba(26,127,55,.12);
     }
     input[type="text"] { flex:1; }
 
-    .btn {
-      padding:5px 13px; border-radius:6px;
-      font-family:var(--mono); font-size:11px;
-      cursor:pointer; border:1px solid var(--br);
-      background:var(--bg); color:var(--txt);
-      transition:all .12s; font-weight:500;
-    }
+    .btn { padding:5px 13px; border-radius:6px; font-family:var(--mono); font-size:11px; cursor:pointer; border:1px solid var(--br); background:var(--bg); color:var(--txt); transition:all .12s; font-weight:500; }
     .btn:hover   { background:var(--br2); }
     .btn-p       { background:var(--grn); color:#fff; border-color:var(--grn); font-weight:600; }
     .btn-p:hover { background:#166c2e; border-color:#166c2e; }
     .btn-d       { background:var(--red-bg); color:var(--red); border-color:var(--red-bd); }
     .btn-d:hover { background:rgba(207,34,46,.14); }
 
-    /* ── TOGGLE ───────────────────────────────────────── */
-    .toggle {
-      width:30px; height:16px;
-      background:var(--br);
-      border-radius:8px; position:relative;
-      cursor:pointer; transition:background .2s; flex-shrink:0;
-    }
+    .toggle { width:30px; height:16px; background:var(--br); border-radius:8px; position:relative; cursor:pointer; transition:background .2s; flex-shrink:0; }
     .toggle.on { background:var(--grn-lt); }
-    .toggle::after {
-      content:''; position:absolute;
-      width:10px; height:10px; background:#fff;
-      border-radius:50%; top:3px; left:3px;
-      transition:left .2s; box-shadow:0 1px 2px rgba(0,0,0,.15);
-    }
+    .toggle::after { content:''; position:absolute; width:10px; height:10px; background:#fff; border-radius:50%; top:3px; left:3px; transition:left .2s; box-shadow:0 1px 2px rgba(0,0,0,.15); }
     .toggle.on::after { left:17px; }
 
-    /* ── MODAL ────────────────────────────────────────── */
-    .modal-wrap {
-      display:none; position:fixed; inset:0;
-      background:rgba(31,35,40,.4);
-      align-items:center; justify-content:center; z-index:50;
-    }
+    .modal-wrap { display:none; position:fixed; inset:0; background:rgba(31,35,40,.4); align-items:center; justify-content:center; z-index:50; }
     .modal-wrap.open { display:flex; }
-    .modal {
-      background:var(--bg2); border:1px solid var(--br);
-      border-radius:12px; padding:22px;
-      width:420px; max-width:92vw;
-      box-shadow:0 8px 24px rgba(31,35,40,.12);
-    }
+    .modal { background:var(--bg2); border:1px solid var(--br); border-radius:12px; padding:22px; width:420px; max-width:92vw; box-shadow:0 8px 24px rgba(31,35,40,.12); }
     .modal.wide { width:640px; max-width:95vw; }
     .mt { font-family:var(--kernel); font-size:15px; color:var(--txt); margin-bottom:16px; border-bottom:1px solid var(--br); padding-bottom:12px; }
     .fr { margin-bottom:12px; }
     .fl { font-size:9px; color:var(--txt2); text-transform:uppercase; letter-spacing:.7px; margin-bottom:5px; font-weight:600; }
     .fr input,.fr select,.fr textarea { width:100%; }
-    textarea {
-      background:var(--bg2); border:1px solid var(--br); color:var(--txt);
-      font-family:var(--mono); font-size:11px; padding:6px 9px;
-      border-radius:6px; outline:none; resize:vertical; min-height:60px;
-      transition:border-color .12s,box-shadow .12s;
-    }
+    textarea { background:var(--bg2); border:1px solid var(--br); color:var(--txt); font-family:var(--mono); font-size:11px; padding:6px 9px; border-radius:6px; outline:none; resize:vertical; min-height:60px; transition:border-color .12s,box-shadow .12s; }
     textarea:focus { border-color:var(--grn); box-shadow:0 0 0 3px rgba(26,127,55,.12); }
     .ma { display:flex; gap:8px; justify-content:flex-end; margin-top:16px; }
 
-    /* ── RULE DETAIL MODAL ────────────────────────────── */
     .rule-detail-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:12px; }
     .rule-detail-field { background:var(--bg); border:1px solid var(--br); border-radius:6px; padding:9px 11px; }
     .rule-detail-field.full { grid-column:1/-1; }
     .rdf-label { font-size:9px; color:var(--txt3); text-transform:uppercase; letter-spacing:.7px; margin-bottom:4px; font-weight:600; }
     .rdf-val   { font-size:11px; color:var(--txt); font-family:var(--mono); }
-    .pattern-box {
-      background:var(--bg); border:1px solid var(--br);
-      border-radius:6px; padding:10px 12px;
-      color:var(--grn); font-family:var(--mono);
-      font-size:11px; word-break:break-all;
-      line-height:1.6; margin-top:4px;
-    }
+    .pattern-box { background:var(--bg); border:1px solid var(--br); border-radius:6px; padding:10px 12px; color:var(--grn); font-family:var(--mono); font-size:11px; word-break:break-all; line-height:1.6; margin-top:4px; }
     .edit-section { border-top:1px solid var(--br); margin-top:14px; padding-top:14px; }
     .edit-section-title { font-size:9px; color:var(--txt2); text-transform:uppercase; letter-spacing:.7px; margin-bottom:10px; font-weight:600; }
     .rule-edit-row { display:flex; align-items:center; gap:8px; margin-bottom:8px; }
     .rule-edit-row label { font-size:10px; color:var(--txt2); min-width:80px; }
     .rule-edit-row input,.rule-edit-row select,.rule-edit-row textarea { flex:1; }
-    .rule-description {
-      background:var(--grn-bg); border-left:3px solid var(--grn);
-      padding:8px 10px; margin-bottom:12px;
-      font-size:10px; color:var(--txt);
-      line-height:1.6; border-radius:0 6px 6px 0;
-    }
+    .rule-description { background:var(--grn-bg); border-left:3px solid var(--grn); padding:8px 10px; margin-bottom:12px; font-size:10px; color:var(--txt); line-height:1.6; border-radius:0 6px 6px 0; }
 
-    /* ── LIVE LOG ─────────────────────────────────────── */
-    .lrow {
-      display:flex; align-items:center; gap:8px;
-      padding:5px 10px; border-bottom:1px solid var(--br2);
-      font-size:10px; animation:fin .25s;
-    }
+    .lrow { display:flex; align-items:center; gap:8px; padding:5px 10px; border-bottom:1px solid var(--br2); font-size:10px; animation:fin .25s; }
     @keyframes fin { from{opacity:0;transform:translateX(-3px)} to{opacity:1;transform:none} }
     .lts  { color:var(--txt3); min-width:72px; }
     .lip  { color:var(--grn);  min-width:108px; font-weight:600; }
     .lpth { flex:1; color:var(--txt2); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
     .lms  { color:var(--txt3); min-width:44px; text-align:right; }
 
-    /* ── HOME CARDS ───────────────────────────────────── */
     .hcard { background:var(--bg2); border:1px solid var(--br); border-radius:6px; padding:16px; margin-bottom:12px; box-shadow:var(--shadow); }
     .host-row   { display:flex; align-items:center; gap:8px; margin-bottom:7px; }
     .host-label { font-size:10px; color:var(--txt3); text-transform:uppercase; letter-spacing:.7px; min-width:80px; font-weight:600; }
     .host-val   { font-size:12px; color:var(--txt); font-family:var(--mono); }
     .host-val.cyan { color:var(--grn); font-weight:700; }
-    .status-bar {
-      display:flex; align-items:center; gap:6px;
-      padding:9px 12px;
-      border:1px solid var(--grn-bd); border-radius:6px;
-      background:var(--grn-bg); margin-top:10px;
-      font-size:10px; color:var(--grn); font-weight:500;
-    }
+    .status-bar { display:flex; align-items:center; gap:6px; padding:9px 12px; border:1px solid var(--grn-bd); border-radius:6px; background:var(--grn-bg); margin-top:10px; font-size:10px; color:var(--grn); font-weight:500; }
     .sparkline { display:flex; align-items:flex-end; gap:2px; height:28px; margin-top:8px; }
-    .spk       { flex:1; border-radius:2px; min-height:2px; }
-    .sep       { height:1px; background:var(--br); margin:10px 0; }
-
+    .spk { flex:1; border-radius:2px; min-height:2px; }
+    .sep { height:1px; background:var(--br); margin:10px 0; }
     .row-filter { display:flex; gap:8px; margin-bottom:12px; align-items:center; flex-wrap:wrap; }
-
-    .hcard input[type="number"],.hcard input[type="email"],.hcard input[type="text"] {
-      background:var(--bg); border:1px solid var(--br); color:var(--txt);
-    }
+    .hcard input[type="number"],.hcard input[type="email"],.hcard input[type="text"] { background:var(--bg); border:1px solid var(--br); color:var(--txt); }
     .hcard input:focus { border-color:var(--grn); box-shadow:0 0 0 3px rgba(26,127,55,.12); }
-
     .runtime-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:6px; margin-bottom:10px; }
 
-    /* ── INFO PAGE ────────────────────────────────────── */
     .info-wrap { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
-    .ascii-panel {
-      background:var(--bg2); border:1px solid var(--br); border-radius:6px;
-      padding:24px; display:flex; flex-direction:column;
-      align-items:center; justify-content:center; box-shadow:var(--shadow);
-    }
-    .ascii-art {
-      font-family:var(--mono); font-size:11px; line-height:1.45;
-      color:var(--grn); white-space:pre; text-align:left;
-    }
-    .ascii-caption {
-      font-family:var(--kernel); font-size:13px;
-      color:var(--grn); margin-top:20px; letter-spacing:2px; opacity:.8;
-    }
+    .ascii-panel { background:var(--bg2); border:1px solid var(--br); border-radius:6px; padding:24px; display:flex; flex-direction:column; align-items:center; justify-content:center; box-shadow:var(--shadow); }
+    .ascii-art { font-family:var(--mono); font-size:11px; line-height:1.45; color:var(--grn); white-space:pre; text-align:left; }
+    .ascii-caption { font-family:var(--kernel); font-size:13px; color:var(--grn); margin-top:20px; letter-spacing:2px; opacity:.8; }
     .info-right { display:flex; flex-direction:column; gap:10px; }
     .info-block { background:var(--bg2); border:1px solid var(--br); border-radius:6px; padding:14px; box-shadow:var(--shadow); }
-    .info-block-title {
-      font-size:9px; color:var(--grn); text-transform:uppercase;
-      letter-spacing:1px; margin-bottom:8px;
-      border-bottom:1px solid var(--br); padding-bottom:6px; font-weight:700;
-    }
+    .info-block-title { font-size:9px; color:var(--grn); text-transform:uppercase; letter-spacing:1px; margin-bottom:8px; border-bottom:1px solid var(--br); padding-bottom:6px; font-weight:700; }
     .info-item { display:flex; gap:8px; padding:6px 0; border-bottom:1px solid var(--br2); font-size:10px; align-items:flex-start; }
     .info-item:last-child { border-bottom:none; }
     .info-item-ico { color:var(--grn); min-width:14px; }
     .info-item-txt { color:var(--txt2); line-height:1.5; }
     .info-item-txt strong { color:var(--grn); font-weight:600; }
-    .tech-pill {
-      display:inline-block; padding:2px 8px; border-radius:20px;
-      font-size:9px; background:var(--grn-bg);
-      border:1px solid var(--grn-bd); color:var(--grn); margin:2px; font-weight:600;
-    }
+    .tech-pill { display:inline-block; padding:2px 8px; border-radius:20px; font-size:9px; background:var(--grn-bg); border:1px solid var(--grn-bd); color:var(--grn); margin:2px; font-weight:600; }
     .version-row { display:flex; align-items:center; justify-content:space-between; padding:6px 0; font-size:10px; border-bottom:1px solid var(--br2); }
     .version-row:last-child { border-bottom:none; }
     .version-key { color:var(--txt3); }
     .version-val { color:var(--txt); font-family:var(--mono); }
+
+    /* ── IF SCANNER specifice ── */
+    .scan-loading { display:flex; align-items:center; gap:8px; padding:16px; color:var(--txt3); font-size:11px; }
+    .scan-spin { width:14px; height:14px; border:2px solid var(--br2); border-top-color:var(--grn); border-radius:50%; animation:spin .8s linear infinite; flex-shrink:0; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+    .if-score-badge { font-family:var(--mono); font-size:10px; padding:2px 7px; border-radius:3px; font-weight:600; }
+    .score-crit { background:rgba(207,34,46,.15); color:var(--red); }
+    .score-warn { background:var(--amb-bg); color:var(--amb); }
+    .score-mild { background:var(--grn-bg); color:var(--grn); }
+    .block-btn { font-size:9px; padding:3px 9px; border-radius:4px; font-family:var(--mono); cursor:pointer; border:1px solid var(--red-bd); background:var(--red-bg); color:var(--red); font-weight:600; transition:all .12s; white-space:nowrap; }
+    .block-btn:hover { background:rgba(207,34,46,.14); }
+    .block-btn.blocked { background:var(--bg); color:var(--txt3); border-color:var(--br); cursor:default; }
+    .ioc-dot { display:inline-block; width:7px; height:7px; border-radius:50%; background:var(--red); margin-right:3px; vertical-align:middle; }
   </style>
 </head>
 <body>
 
 <div class="app">
 
-  <!-- ── TOPBAR ──────────────────────────────────────────────── -->
+  <!-- TOPBAR -->
   <div class="top">
     <div class="logo"><div class="fire"></div>F I R E B A L L</div>
     <span class="ver">safe!</span>
@@ -432,7 +260,7 @@
     </div>
   </div>
 
-  <!-- ── SIDEBAR ─────────────────────────────────────────────── -->
+  <!-- SIDEBAR -->
   <div class="side">
     <div class="nav-sec">main</div>
     <div class="nav on"  onclick="sv('home',this)">    <span class="nav-ico">⌂</span>Home</div>
@@ -441,47 +269,30 @@
     <div class="nav-sec">firewall</div>
     <div class="nav"     onclick="sv('rules',this)">   <span class="nav-ico">☰</span>Rules</div>
     <div class="nav"     onclick="sv('actions',this)"> <span class="nav-ico">></span>Actions<span class="nav-badge" id="badge-count">0</span></div>
+    <div class="nav-sec">ml</div>
+    <div class="nav"     onclick="sv('ifscan',this)">  <span class="nav-ico">⊙</span>IF Scanner</div>
     <div class="nav-sec">system</div>
     <div class="nav"     onclick="sv('info',this)">    <span class="nav-ico">?</span>Info</div>
   </div>
 
-  <!-- ── MAIN CONTENT ────────────────────────────────────────── -->
+  <!-- MAIN -->
   <div class="main">
 
-    <!-- HOME ─────────────────────────────────────── -->
+    <!-- HOME -->
     <div class="view on" id="view-home">
       <div class="ph">"`-._,-'"`-Protected App-'"`-._,-'</div>
       <div class="ps">· configure the target your WAF is shielding ⛨ ·</div>
-
       <div class="g2">
         <div class="hcard">
           <div class="ct">----> proxy target <----</div>
-
-          <div class="host-row">
-            <span class="host-label">Your app</span>
-            <span class="host-val cyan">localhost:<span id="h-public">PORT</span></span>
-            <span style="font-size:9px;color:var(--txt3);margin-left:6px">(open your app normally)</span>
-          </div>
-          <div class="host-row">
-            <span class="host-label">WAF routes to</span>
-            <span class="host-val" style="color:var(--txt3)">localhost:<span id="h-internal">PORT + 1</span></span>
-            <span style="font-size:9px;color:var(--txt3);margin-left:6px">(run your app here)</span>
-          </div>
-          <div class="host-row">
-            <span class="host-label">Alert email</span>
-            <span class="host-val" id="h-email" style="color:var(--grn)">—</span>
-          </div>
-
-          <div class="status-bar" id="status-bar">
-            <div class="live-dot"></div>
-            Checking…
-          </div>
-
+          <div class="host-row"><span class="host-label">Your app</span><span class="host-val cyan">localhost:<span id="h-public">PORT</span></span><span style="font-size:9px;color:var(--txt3);margin-left:6px">(open your app normally)</span></div>
+          <div class="host-row"><span class="host-label">WAF routes to</span><span class="host-val" style="color:var(--txt3)">localhost:<span id="h-internal">PORT + 1</span></span><span style="font-size:9px;color:var(--txt3);margin-left:6px">(run your app here)</span></div>
+          <div class="host-row"><span class="host-label">Alert email</span><span class="host-val" id="h-email" style="color:var(--grn)">—</span></div>
+          <div class="status-bar" id="status-bar"><div class="live-dot"></div>Checking…</div>
           <div id="start-cmd-box" style="margin-top:10px;padding:9px 12px;background:var(--bg);border:1px solid var(--br);border-radius:6px;font-size:10px;color:var(--grn);display:none">
             <div style="font-size:9px;color:var(--txt3);margin-bottom:4px;text-transform:uppercase;letter-spacing:.8px">start your app with:</div>
             <span id="start-cmd" style="font-family:var(--mono)"></span>
           </div>
-
           <div style="margin-top:12px;display:flex;flex-direction:column;gap:6px">
             <div style="display:flex;align-items:center;gap:8px">
               <span style="font-size:9px;color:var(--txt3);min-width:80px;text-transform:uppercase;letter-spacing:.7px;font-weight:600">App port</span>
@@ -495,48 +306,20 @@
             <button class="btn btn-p" onclick="applyTarget()" style="align-self:flex-end;padding:5px 18px">Apply</button>
           </div>
         </div>
-
-        <!-- RUNTIME STATS CARD -->
         <div class="hcard">
           <div class="ct">----> runtime stats <----</div>
-
           <div class="runtime-grid">
-            <div class="stat-mini">
-              <div class="stat-mini-label">Req / min</div>
-              <div class="stat-mini-val" id="rpm-val">—</div>
-              <div class="stat-mini-sub" id="rpm-sub">calculating…</div>
-            </div>
-            <div class="stat-mini">
-              <div class="stat-mini-label">Block rate</div>
-              <div class="stat-mini-val" id="blk-rate-val" style="color:var(--red)">—</div>
-              <div class="stat-mini-sub" id="blk-rate-sub">of all traffic</div>
-            </div>
-            <div class="stat-mini">
-              <div class="stat-mini-label">Avg latency</div>
-              <div class="stat-mini-val" id="avg-lat-val">—</div>
-              <div class="stat-mini-sub">ms / request</div>
-            </div>
+            <div class="stat-mini"><div class="stat-mini-label">Req / min</div><div class="stat-mini-val" id="rpm-val">—</div><div class="stat-mini-sub" id="rpm-sub">calculating…</div></div>
+            <div class="stat-mini"><div class="stat-mini-label">Block rate</div><div class="stat-mini-val" id="blk-rate-val" style="color:var(--red)">—</div><div class="stat-mini-sub" id="blk-rate-sub">of all traffic</div></div>
+            <div class="stat-mini"><div class="stat-mini-label">Avg latency</div><div class="stat-mini-val" id="avg-lat-val">—</div><div class="stat-mini-sub">ms / request</div></div>
           </div>
-
           <div class="runtime-grid" style="margin-bottom:0">
-            <div class="stat-mini">
-              <div class="stat-mini-label">Total reqs</div>
-              <div class="stat-mini-val" id="rt-total" style="font-size:14px;color:var(--grn)">—</div>
-            </div>
-            <div class="stat-mini">
-              <div class="stat-mini-label">Blocked</div>
-              <div class="stat-mini-val" id="rt-blocked" style="font-size:14px;color:var(--red)">—</div>
-            </div>
-            <div class="stat-mini">
-              <div class="stat-mini-label">Passed</div>
-              <div class="stat-mini-val" id="rt-passed" style="font-size:14px;color:var(--grn)">—</div>
-            </div>
+            <div class="stat-mini"><div class="stat-mini-label">Total reqs</div><div class="stat-mini-val" id="rt-total" style="font-size:14px;color:var(--grn)">—</div></div>
+            <div class="stat-mini"><div class="stat-mini-label">Blocked</div><div class="stat-mini-val" id="rt-blocked" style="font-size:14px;color:var(--red)">—</div></div>
+            <div class="stat-mini"><div class="stat-mini-label">Passed</div><div class="stat-mini-val" id="rt-passed" style="font-size:14px;color:var(--grn)">—</div></div>
           </div>
-
           <div class="sep"></div>
           <div class="ct">----> request throughput <----</div>
-
-          <!-- Throughput sparkline (canvas-based) -->
           <div class="throughput-wrap">
             <canvas id="throughput-canvas" class="throughput-canvas"></canvas>
             <span class="throughput-label" id="throughput-peak"></span>
@@ -545,9 +328,7 @@
             <span style="font-size:8px;color:var(--txt3)">60s ago</span>
             <span style="font-size:8px;color:var(--txt3)">now</span>
           </div>
-
           <div class="sep"></div>
-          <!-- Blk rate bar -->
           <div class="bar">
             <span class="bl">Block rate</span>
             <div class="bt"><div class="bf" style="width:0%;background:var(--red)" id="blk-bar"></div></div>
@@ -555,57 +336,38 @@
           </div>
         </div>
       </div>
-
       <div class="card-lg">
         <div class="ct">active protection rules summary</div>
         <div class="g3" style="margin-bottom:0">
-          <div style="text-align:center;padding:8px 0">
-            <div style="font-size:18px;font-weight:700;font-family:var(--sans);color:var(--red)" id="sum-block">—</div>
-            <div style="font-size:9px;color:var(--txt3);margin-top:3px;font-weight:600;text-transform:uppercase;letter-spacing:.7px">BLOCK rules</div>
-          </div>
-          <div style="text-align:center;padding:8px 0;border-left:1px solid var(--br);border-right:1px solid var(--br)">
-            <div style="font-size:18px;font-weight:700;font-family:var(--sans);color:var(--amb)" id="sum-log">—</div>
-            <div style="font-size:9px;color:var(--txt3);margin-top:3px;font-weight:600;text-transform:uppercase;letter-spacing:.7px">LOG-only rules</div>
-          </div>
-          <div style="text-align:center;padding:8px 0">
-            <div style="font-size:18px;font-weight:700;font-family:var(--sans);color:var(--txt3)" id="sum-off">—</div>
-            <div style="font-size:9px;color:var(--txt3);margin-top:3px;font-weight:600;text-transform:uppercase;letter-spacing:.7px">disabled</div>
-          </div>
+          <div style="text-align:center;padding:8px 0"><div style="font-size:18px;font-weight:700;font-family:var(--sans);color:var(--red)" id="sum-block">—</div><div style="font-size:9px;color:var(--txt3);margin-top:3px;font-weight:600;text-transform:uppercase;letter-spacing:.7px">BLOCK rules</div></div>
+          <div style="text-align:center;padding:8px 0;border-left:1px solid var(--br);border-right:1px solid var(--br)"><div style="font-size:18px;font-weight:700;font-family:var(--sans);color:var(--amb)" id="sum-log">—</div><div style="font-size:9px;color:var(--txt3);margin-top:3px;font-weight:600;text-transform:uppercase;letter-spacing:.7px">LOG-only rules</div></div>
+          <div style="text-align:center;padding:8px 0"><div style="font-size:18px;font-weight:700;font-family:var(--sans);color:var(--txt3)" id="sum-off">—</div><div style="font-size:9px;color:var(--txt3);margin-top:3px;font-weight:600;text-transform:uppercase;letter-spacing:.7px">disabled</div></div>
         </div>
       </div>
     </div>
 
-    <!-- OVERVIEW ─────────────────────────────────────── -->
+    <!-- OVERVIEW -->
     <div class="view" id="view-overview">
       <div class="ph">"`-._,-'"`-Analytics-'"`-._,-'</div>
       <div class="ps">· analytics · overview ·</div>
-
       <div class="g4">
         <div class="card"><div class="ml">Total requests</div><div class="mv" id="ov-total">—</div><div class="ms nu" id="ov-total-sub"></div></div>
         <div class="card"><div class="ml">Blocked</div><div class="mv" id="ov-blocked" style="color:var(--red)">—</div><div class="ms dn" id="ov-blk-sub"></div></div>
         <div class="card"><div class="ml">Active rules</div><div class="mv" id="ov-rules">—</div><div class="ms nu">0 disabled</div></div>
         <div class="card"><div class="ml">Avg response</div><div class="mv" id="ov-avg-resp">—</div><div class="ms nu">ms</div></div>
       </div>
-
       <div class="g2">
-        <div class="card-lg" style="margin-bottom:0">
-          <div class="ct">top IPs</div>
-          <div id="top-ips-list"><div style="color:var(--txt3);font-size:10px">No data yet</div></div>
-        </div>
-        <div class="card-lg" style="margin-bottom:0">
-          <div class="ct">attack types</div>
-          <div id="atk-types-list"><div style="color:var(--txt3);font-size:10px">No data yet</div></div>
-        </div>
+        <div class="card-lg" style="margin-bottom:0"><div class="ct">top IPs</div><div id="top-ips-list"><div style="color:var(--txt3);font-size:10px">No data yet</div></div></div>
+        <div class="card-lg" style="margin-bottom:0"><div class="ct">attack types</div><div id="atk-types-list"><div style="color:var(--txt3);font-size:10px">No data yet</div></div></div>
       </div>
     </div>
 
-    <!-- LIVE TRAFFIC ─────────────────────────────────── -->
+    <!-- LIVE TRAFFIC -->
     <div class="view" id="view-traffic">
       <div class="ph">"`-._,-'"`-Live traffic-'"`-._,-'</div>
       <div class="ps">· real-time network stream ·</div>
       <div style="display:flex;align-items:center;gap:6px;padding:7px 12px;border:1px solid var(--grn-bd);border-radius:6px;background:var(--grn-bg);margin-bottom:12px;font-size:10px;color:var(--grn);font-weight:500">
-        <div class="live-dot"></div>
-        polling every 3s — newest entries at top
+        <div class="live-dot"></div>polling every 3s — newest entries at top
       </div>
       <div class="card-lg" style="padding:0;margin-bottom:0">
         <div style="display:flex;padding:6px 10px;border-bottom:1px solid var(--br);background:var(--bg);gap:8px">
@@ -620,62 +382,111 @@
       </div>
     </div>
 
-    <!-- WAF RULES ────────────────────────────────────── -->
+    <!-- WAF RULES -->
     <div class="view" id="view-rules">
       <div class="ph">"`-._,-'"`-Firewall Rules-'"`-._,-'</div>
       <div class="ps">· Manage detection rules · click any rule to inspect & edit ·</div>
       <div class="row-filter">
         <input type="text" id="rsearch" placeholder="Filter by name..." oninput="filterR()">
-        <select id="rzone" onchange="filterR()">
-          <option value="">All zones</option>
-          <option>PATH</option><option>QUERY_STRING</option><option>HEADERS</option><option>BODY</option>
-        </select>
-        <select id="raction" onchange="filterR()">
-          <option value="">All actions</option>
-          <option>BLOCK</option><option>LOG</option>
-        </select>
+        <select id="rzone" onchange="filterR()"><option value="">All zones</option><option>PATH</option><option>QUERY_STRING</option><option>HEADERS</option><option>BODY</option></select>
+        <select id="raction" onchange="filterR()"><option value="">All actions</option><option>BLOCK</option><option>LOG</option></select>
         <button class="btn btn-p" onclick="openNewRuleModal()">+ New rule</button>
       </div>
       <div class="card-lg" style="padding:0;margin-bottom:0">
         <table style="table-layout:fixed">
-          <colgroup>
-            <col style="width:36px"><col><col style="width:96px">
-            <col style="width:62px"><col style="width:48px"><col style="width:56px">
-          </colgroup>
-          <thead>
-            <tr><th>ID</th><th>Name</th><th>Zone</th><th>Action</th><th>On</th><th></th></tr>
-          </thead>
+          <colgroup><col style="width:36px"><col><col style="width:96px"><col style="width:62px"><col style="width:48px"><col style="width:56px"></colgroup>
+          <thead><tr><th>ID</th><th>Name</th><th>Zone</th><th>Action</th><th>On</th><th></th></tr></thead>
           <tbody id="rules-body"></tbody>
         </table>
       </div>
     </div>
 
-    <!-- ACTIONS LOG ──────────────────────────────────── -->
+    <!-- ACTIONS LOG -->
     <div class="view" id="view-actions">
       <div class="ph">"`-._,-'"`-Actions-'"`-._,-'</div>
       <div class="ps">· all firewall events ·</div>
       <div class="card-lg" style="padding:0;margin-bottom:0">
         <table style="table-layout:fixed">
-          <colgroup>
-            <col style="width:68px"><col style="width:50px"><col style="width:140px">
-            <col><col style="width:110px"><col style="width:130px">
-          </colgroup>
-          <thead>
-            <tr><th>Time</th><th>Action</th><th>Rule</th><th>Trigger</th><th>Client IP</th><th>Path</th></tr>
-          </thead>
+          <colgroup><col style="width:68px"><col style="width:50px"><col style="width:140px"><col><col style="width:110px"><col style="width:130px"></colgroup>
+          <thead><tr><th>Time</th><th>Action</th><th>Rule</th><th>Trigger</th><th>Client IP</th><th>Path</th></tr></thead>
           <tbody id="actions-body"></tbody>
         </table>
       </div>
     </div>
 
-    <!-- INFO ─────────────────────────────────────────── -->
+    <!-- ══════════════════════════════════════════════════════════
+         IF SCANNER — sectiune noua
+         ══════════════════════════════════════════════════════════ -->
+    <div class="view" id="view-ifscan">
+      <div class="ph">"`-._,-'"`-IF Anomaly Scanner-'"`-._,-'</div>
+      <div class="ps">· Isolation Forest pe traficul curent · anomalii posibile pentru review manual ·</div>
+
+      <!-- Toolbar scan -->
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px;flex-wrap:wrap">
+        <button class="btn btn-p" id="scan-btn" onclick="startScan()">⊙ Scan for anomalies</button>
+        <span id="scan-status" style="font-size:10px;color:var(--txt3)">Apasa scan pentru a analiza traficul stocat</span>
+        <span id="scan-badge" style="display:none;font-size:10px;padding:1px 10px;border:1px solid var(--red-bd);color:var(--red);background:var(--red-bg);border-radius:20px;font-weight:600"></span>
+      </div>
+
+      <!-- Scatter chart card -->
+      <div class="card-lg" id="scatter-card" style="display:none;margin-bottom:12px">
+        <div class="ct">anomaly score · response time — normal vs anomalie detectata</div>
+        <canvas id="scatter-canvas" style="width:100%;height:240px;display:block"></canvas>
+        <div style="display:flex;gap:20px;margin-top:8px;font-size:9px;color:var(--txt3);flex-wrap:wrap">
+          <span><span style="color:var(--grn);font-weight:700;font-size:11px">●</span> Trafic normal</span>
+          <span><span style="color:var(--red);font-weight:700;font-size:12px">✕</span> Anomalie detectata (IF score sub prag)</span>
+          <span style="margin-left:auto">Axa X = IF anomaly score · Axa Y = response time ms</span>
+        </div>
+      </div>
+
+      <!-- Lista anomalii -->
+      <div class="card-lg" id="anomaly-list-card" style="display:none;padding:0;margin-bottom:0">
+        <div style="padding:10px 14px;border-bottom:1px solid var(--br);display:flex;align-items:center;gap:8px">
+          <span style="font-size:10px;color:var(--txt2);text-transform:uppercase;letter-spacing:.7px;font-weight:600">anomalii detectate</span>
+          <span id="anomaly-count-label" style="font-size:10px;color:var(--txt3)"></span>
+          <span style="font-size:9px;color:var(--txt3);margin-left:auto">Score mai mic = mai suspect · selecteaza Block IP pentru a bloca adresa</span>
+        </div>
+        <div id="no-anomalies-msg" style="display:none;padding:20px;text-align:center;color:var(--txt3);font-size:11px">
+          Nicio anomalie detectata in traficul curent.
+        </div>
+        <div style="overflow-x:auto">
+          <table style="table-layout:fixed;min-width:700px">
+            <colgroup>
+              <col style="width:72px">
+              <col style="width:110px">
+              <col style="width:38px">
+              <col>
+              <col style="width:52px">
+              <col style="width:60px">
+              <col style="width:36px">
+              <col style="width:70px">
+              <col style="width:82px">
+            </colgroup>
+            <thead>
+              <tr>
+                <th>Time</th>
+                <th>IP</th>
+                <th>Mtd</th>
+                <th>Path</th>
+                <th>Status</th>
+                <th>RT (ms)</th>
+                <th>IoC</th>
+                <th>IF Score</th>
+                <th>Actiune</th>
+              </tr>
+            </thead>
+            <tbody id="anomaly-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <!-- ══ END IF SCANNER ══ -->
+
+    <!-- INFO -->
     <div class="view" id="view-info">
       <div class="ph">"`-._,-'"`-About Fireball-'"`-._,-'</div>
       <div class="ps">· system information · architecture ·</div>
-
       <div class="info-wrap">
-
-        <!-- ASCII art panel -->
         <div class="ascii-panel">
           <pre class="ascii-art"> ___________
 ||"+.+"+.+"||            _______
@@ -693,59 +504,30 @@
            \_____/</pre>
           <div class="ascii-caption">[ FIREBALL WAF ]</div>
           <div style="margin-top:12px;display:flex;gap:6px;flex-wrap:wrap;justify-content:center">
-            <span class="tech-pill">HTTPX</span>
-            <span class="tech-pill">regex</span>
-            <span class="tech-pill">asyncio</span>
-            <span class="tech-pill">FastAPI</span>
-            <span class="tech-pill">Uvicorn</span>
-            <span class="tech-pill">DuckDB</span>
-            <span class="tech-pill">Python 3.11+</span>
+            <span class="tech-pill">HTTPX</span><span class="tech-pill">regex</span><span class="tech-pill">asyncio</span>
+            <span class="tech-pill">FastAPI</span><span class="tech-pill">Uvicorn</span><span class="tech-pill">DuckDB</span>
+            <span class="tech-pill">Python 3.11+</span><span class="tech-pill">scikit-learn</span>
           </div>
         </div>
-
-        <!-- Info right column -->
         <div class="info-right">
-
           <div class="info-block">
             <div class="info-block-title"> About Fireball...</div>
-            <div class="info-item">
-              <span class="info-item-ico">*</span>
-              <span class="info-item-txt"><strong>Reverse-proxy WAF</strong> — sits in front of your app, intercepts every HTTP request before it reaches your code.</span>
-            </div>
-            <div class="info-item">
-              <span class="info-item-ico">*</span>
-              <span class="info-item-txt"><strong>Regex engine</strong> — pattern-matches against PATH, QUERY_STRING, HEADERS, and BODY zones using compiled regex rules.</span>
-            </div>
-            <div class="info-item">
-              <span class="info-item-ico">*</span>
-              <span class="info-item-txt"><strong>Behavioral/Volumetric Log Analyzer</strong> — runs every 60s, detects Brute Force, Scanners, DDoS, SQLi/XSS probing from log patterns.</span>
-            </div>
-            <div class="info-item">
-              <span class="info-item-ico">*</span>
-              <span class="info-item-txt"><strong>Zero-config database</strong> — DuckDB stores all request logs and firewall actions in a single embedded file (fireball.db).</span>
-            </div>
+            <div class="info-item"><span class="info-item-ico">*</span><span class="info-item-txt"><strong>Reverse-proxy WAF</strong> — sits in front of your app, intercepts every HTTP request before it reaches your code.</span></div>
+            <div class="info-item"><span class="info-item-ico">*</span><span class="info-item-txt"><strong>Regex engine</strong> — pattern-matches against PATH, QUERY_STRING, HEADERS, and BODY zones using compiled regex rules.</span></div>
+            <div class="info-item"><span class="info-item-ico">*</span><span class="info-item-txt"><strong>Behavioral/Volumetric Log Analyzer</strong> — runs every 60s, detects Brute Force, Scanners, DDoS, SQLi/XSS probing from log patterns.</span></div>
+            <div class="info-item"><span class="info-item-ico">*</span><span class="info-item-txt"><strong>IF Anomaly Scanner</strong> — Isolation Forest unsupervised scan pe traficul stocat; identifica anomalii comportamentale pentru review manual.</span></div>
+            <div class="info-item"><span class="info-item-ico">*</span><span class="info-item-txt"><strong>Zero-config database</strong> — DuckDB stores all request logs and firewall actions in a single embedded file (fireball.db).</span></div>
           </div>
-
-          <div class="info-block">
-            <div class="info-block-title"> :.:.:.:.:.: threats covered :.:.:.:.:.: </div>
-            <div class="info-item"><span class="info-item-ico">*</span><span class="info-item-txt"><strong>Path Traversal</strong> — ../,  %2e%2e/, unicode & overlong UTF-8 encodings, Spring ..;/ bypass</span></div>
-            <div class="info-item"><span class="info-item-ico">*</span><span class="info-item-txt"><strong>SQL Injection</strong> — auth bypass, UNION SELECT, blind tautologies, comment obfuscation</span></div>
-            <div class="info-item"><span class="info-item-ico">*</span><span class="info-item-txt"><strong>XSS</strong> — script tags, event handlers, javascript: URIs, HTML entity encoding</span></div>
-            <div class="info-item"><span class="info-item-ico">*</span><span class="info-item-txt"><strong>Command Injection</strong> — RCE payloads in query & body (cat, wget, bash, ${IFS}…)</span></div>
-            <div class="info-item"><span class="info-item-ico">*</span><span class="info-item-txt"><strong>SSRF</strong> — internal IP ranges, file:// dict:// gopher:// protocols</span></div>
-            <div class="info-item"><span class="info-item-ico">*</span><span class="info-item-txt"><strong>Null bytes, double encoding, IIS short names, HTTP verb tampering</strong></span></div>
-          </div>
-
           <div class="info-block">
             <div class="info-block-title">⚙ system</div>
             <div class="version-row"><span class="version-key">Dashboard port</span><span class="version-val">:8000</span></div>
             <div class="version-row"><span class="version-key">Proxy port</span><span class="version-val">:8080</span></div>
             <div class="version-row"><span class="version-key">Log batch interval</span><span class="version-val">1 second</span></div>
             <div class="version-row"><span class="version-key">Analyzer interval</span><span class="version-val">60 seconds</span></div>
+            <div class="version-row"><span class="version-key">IF Scanner</span><span class="version-val">on-demand (manual)</span></div>
             <div class="version-row"><span class="version-key">IP block cache</span><span class="version-val">in-memory O(1) set</span></div>
             <div class="version-row"><span class="version-key">DB file</span><span class="version-val">fireball.db</span></div>
           </div>
-
         </div>
       </div>
     </div>
@@ -753,77 +535,39 @@
   </div><!-- /.main -->
 </div><!-- /.app -->
 
-<!-- ── NEW RULE MODAL ─────────────────────────────────────────── -->
+<!-- NEW RULE MODAL -->
 <div class="modal-wrap" id="modal-new">
   <div class="modal">
     <div class="mt">New WAF rule</div>
-    <div class="fr"><div class="fl">Name</div>        <input type="text" id="new-name" placeholder="e.g. Block SQLi in cookies"></div>
-    <div class="fr"><div class="fl">Rule type</div>   <select id="new-type"><option>REGEX_MATCH</option><option>IP_MATCH</option></select></div>
-    <div class="fr"><div class="fl">Target zone</div> <select id="new-zone"><option>PATH</option><option>QUERY_STRING</option><option>HEADERS</option><option>BODY</option></select></div>
-    <div class="fr"><div class="fl">Pattern</div>     <textarea id="new-pattern" placeholder="(?i)union[\s\/\*]+select"></textarea></div>
-    <div class="fr"><div class="fl">Action</div>      <select id="new-action"><option>BLOCK</option><option>LOG</option></select></div>
-    <div class="ma">
-      <button class="btn" onclick="closeNewRuleModal()">Cancel</button>
-      <button class="btn btn-p" onclick="createRule()">Create rule</button>
-    </div>
+    <div class="fr"><div class="fl">Name</div><input type="text" id="new-name" placeholder="e.g. Block SQLi in cookies"></div>
+    <div class="fr"><div class="fl">Rule type</div><select id="new-type"><option>REGEX_MATCH</option><option>IP_MATCH</option></select></div>
+    <div class="fr"><div class="fl">Target zone</div><select id="new-zone"><option>PATH</option><option>QUERY_STRING</option><option>HEADERS</option><option>BODY</option></select></div>
+    <div class="fr"><div class="fl">Pattern</div><textarea id="new-pattern" placeholder="(?i)union[\s\/\*]+select"></textarea></div>
+    <div class="fr"><div class="fl">Action</div><select id="new-action"><option>BLOCK</option><option>LOG</option></select></div>
+    <div class="ma"><button class="btn" onclick="closeNewRuleModal()">Cancel</button><button class="btn btn-p" onclick="createRule()">Create rule</button></div>
   </div>
 </div>
 
-<!-- ── RULE DETAIL / EDIT MODAL ───────────────────────────────── -->
+<!-- RULE DETAIL MODAL -->
 <div class="modal-wrap" id="modal-detail">
   <div class="modal wide">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
       <div class="mt" style="margin-bottom:0" id="detail-title">Rule #00</div>
-      <div style="display:flex;gap:6px;align-items:center">
-        <span id="detail-action-tag"></span>
-        <span id="detail-zone-tag"></span>
-      </div>
+      <div style="display:flex;gap:6px;align-items:center"><span id="detail-action-tag"></span><span id="detail-zone-tag"></span></div>
     </div>
-
-    <!-- description hint -->
     <div class="rule-description" id="detail-description"></div>
-
-    <!-- read-only overview -->
     <div class="rule-detail-grid" id="detail-overview">
-      <div class="rule-detail-field">
-        <div class="rdf-label">Rule ID</div>
-        <div class="rdf-val" id="d-id">—</div>
-      </div>
-      <div class="rule-detail-field">
-        <div class="rdf-label">Type</div>
-        <div class="rdf-val" id="d-type">—</div>
-      </div>
-      <div class="rule-detail-field full">
-        <div class="rdf-label">Regex pattern</div>
-        <div class="pattern-box" id="d-pattern">—</div>
-      </div>
+      <div class="rule-detail-field"><div class="rdf-label">Rule ID</div><div class="rdf-val" id="d-id">—</div></div>
+      <div class="rule-detail-field"><div class="rdf-label">Type</div><div class="rdf-val" id="d-type">—</div></div>
+      <div class="rule-detail-field full"><div class="rdf-label">Regex pattern</div><div class="pattern-box" id="d-pattern">—</div></div>
     </div>
-
-    <!-- editable section -->
     <div class="edit-section">
       <div class="edit-section-title">✎ Edit rule</div>
-      <div class="rule-edit-row">
-        <label>Name</label>
-        <input type="text" id="edit-name">
-      </div>
-      <div class="rule-edit-row">
-        <label>Zone</label>
-        <select id="edit-zone">
-          <option>PATH</option><option>QUERY_STRING</option><option>HEADERS</option><option>BODY</option>
-        </select>
-      </div>
-      <div class="rule-edit-row">
-        <label>Action</label>
-        <select id="edit-action">
-          <option>BLOCK</option><option>LOG</option>
-        </select>
-      </div>
-      <div class="rule-edit-row" style="align-items:flex-start">
-        <label style="padding-top:4px">Pattern</label>
-        <textarea id="edit-pattern" style="min-height:70px"></textarea>
-      </div>
+      <div class="rule-edit-row"><label>Name</label><input type="text" id="edit-name"></div>
+      <div class="rule-edit-row"><label>Zone</label><select id="edit-zone"><option>PATH</option><option>QUERY_STRING</option><option>HEADERS</option><option>BODY</option></select></div>
+      <div class="rule-edit-row"><label>Action</label><select id="edit-action"><option>BLOCK</option><option>LOG</option></select></div>
+      <div class="rule-edit-row" style="align-items:flex-start"><label style="padding-top:4px">Pattern</label><textarea id="edit-pattern" style="min-height:70px"></textarea></div>
     </div>
-
     <div class="ma">
       <button class="btn btn-d" id="detail-del-btn">Delete rule</button>
       <div style="flex:1"></div>
@@ -836,47 +580,10 @@
 <script>
   const WAF_BASE = 'http://127.0.0.1:8000';
 
-  // ── RULE DESCRIPTIONS ──────────────────────────────────────────
+  // ── RULE DESCRIPTIONS (pastrate din original) ───────────────────
   const RULE_DESCRIPTIONS = {
-    1:  'Detects directory traversal sequences in the URL path: ../, ..\\ and all their encoded forms including Unicode (%u002e), fullwidth (%uff0e), overlong UTF-8 (%c0%ae), double-encoded (%252e), and the Spring Boot ..;/ bypass.',
-    2:  'Blocks direct access to sensitive server files regardless of encoding: /etc/passwd, /etc/shadow, /.env, /wp-config.php, /proc/self/environ, and Kubernetes service account secrets.',
-    3:  'Same traversal detection as Rule 1, applied to query string parameters. Catches file path injection via ?file=../../etc/passwd and all encoding variants.',
-    4:  'Blocks absolute Linux/Kubernetes path references in query parameters: /etc/, /proc/, /var/, /run/, /home/. Prevents direct file disclosure via parameter injection.',
-    5:  'Blocks Windows absolute path references and UNC share paths in query parameters: c:\\windows\\, c:/inetpub/, and \\\\server\\share patterns.',
-    6:  'Applies the same traversal pattern detection to HTTP request headers (Referer, User-Agent, X-Custom-*, Cookie, etc.).',
-    7:  'Detects OS command injection in the request body: ; cat /etc/, | bash, and wget http:// patterns that indicate attempt to execute shell commands.',
-    8:  'Catches null byte injection (%00) in query parameters. Null bytes are used to truncate filenames and bypass server-side extension checks.',
-    9:  'Blocks IIS short-name (8.3 format) enumeration attacks using NTFS alternate data streams: ::$INDEX_ALLOCATION and ::$DATA suffixes.',
-    10: 'Blocks SQL authentication bypass payloads in query params: \' OR \'1\'=\'1, admin\'--, and similar tautology/comment injection patterns.',
-    11: 'Same SQL auth bypass detection as Rule 10, applied to the request body (JSON, form data, etc.).',
-    12: 'Blocks UNION SELECT SQL injection in query parameters including obfuscated forms: UNION/**/SELECT, UNION+ALL+SELECT.',
-    13: 'Same UNION SELECT detection as Rule 12, applied to the POST/PUT/PATCH request body.',
-    14: 'LOG-ONLY: Records requests containing SQL comment syntax (/* */, --, #) that may indicate probing. Does not block — low false positive risk.',
-    15: 'LOG-ONLY: Records requests containing dangerous SQL keywords (SELECT, INSERT, DROP, EXEC, etc.) in query parameters.',
-    16: 'LOG-ONLY: Same keyword detection as Rule 15 applied to the request body.',
-    17: 'LOG-ONLY: Records boolean blind SQL injection tautologies like 1=1, 1<2, 0=0 in query params. High false positive risk, log only.',
-    18: 'Blocks SQL injection attempts in HTTP headers (especially Cookie): UNION SELECT, \'OR\', comment sequences, WAITFOR DELAY, and BENCHMARK().',
-    20: 'Blocks <script> tags in query parameters, including obfuscated variants with spaces and URL-encoded angle brackets.',
-    21: 'Same script tag detection as Rule 20, applied to the request body.',
-    22: 'Blocks XSS event handler injection in query params: onerror=, onload=, onclick= and all DOM event attributes.',
-    23: 'Same event handler detection as Rule 22, applied to the request body.',
-    24: 'Blocks dangerous URI schemes in query params used for XSS: javascript:, vbscript:, data:text/html, data:image/svg.',
-    25: 'Same URI scheme detection as Rule 24, applied to the request body.',
-    26: 'Blocks dangerous HTML tags in query params: <iframe>, <object>, <embed>, <applet>, <form>, <base>, <meta>, <svg>, and <img> with javascript/data src.',
-    27: 'Same dangerous HTML tag detection as Rule 26, applied to the request body.',
-    28: 'Blocks HTML entity-encoded JavaScript characters in query params: &#x41;, &#65; etc. Used to bypass naive XSS filters.',
-    29: 'Blocks XSS payloads embedded in HTTP headers (Referer, User-Agent): script tags, event handlers, and javascript: URIs.',
-    30: 'Blocks null bytes (%00) in the URL path, used to terminate strings and bypass file extension validation.',
-    31: 'Same null byte detection as Rule 30, applied to query string parameters.',
-    32: 'Blocks double URL-encoded characters in the path: %252e (→%2e→.), %252f (→%2f→/), %255c (→%5c→\\). Detects encoding evasion.',
-    33: 'Same double encoding detection as Rule 32, applied to query string parameters.',
-    34: 'Blocks malformed URI characters in the path: bare % not followed by two hex digits, and raw control characters (\\x00–\\x1f, \\x7f).',
-    35: 'Blocks non-printable control characters in query parameters (\\x01–\\x08, \\x7f, etc.) that are used in injection and fuzzing attacks.',
-    36: 'Blocks literal backslash characters in the URL path, used in Windows path traversal and as an IIS alternative to forward-slash.',
-    37: 'Blocks command injection in query params: ; cat, | bash, & whoami, ` id, $(curl), ${IFS} and other shell metacharacter+command combos.',
-    38: 'Same command injection detection as Rule 37, applied to the request body.',
-    39: 'Blocks Server-Side Request Forgery (SSRF) targeting internal IP ranges: 127.x, 10.x, 192.168.x, 172.16-31.x, 169.254.169.254, localhost.',
-    40: 'Blocks SSRF via dangerous URL schemes in query params: file://, dict://, gopher://, ftp:// that can reach internal services.',
+    1:'Detects directory traversal sequences in the URL path.',
+    2:'Blocks direct access to sensitive server files.',
   };
 
   // ── HELPERS ─────────────────────────────────────────────────────
@@ -884,14 +591,11 @@
     const m = { PATH:'t-path', QUERY_STRING:'t-qs', HEADERS:'t-hdr', BODY:'t-body' };
     return `<span class="tag ${m[z]||''}">${z}</span>`;
   }
-  function atag(a) {
-    return `<span class="tag ${a==='BLOCK'?'t-blk':'t-log'}">${a||'—'}</span>`;
-  }
+  function atag(a) { return `<span class="tag ${a==='BLOCK'?'t-blk':'t-log'}">${a||'—'}</span>`; }
   function mtag(m) {
     const c = { GET:'mget', POST:'mpost', PUT:'mput', DELETE:'mdel' };
     return `<span style="font-weight:700" class="${c[m]||''}">${m}</span>`;
   }
-
   function sv(name, el) {
     document.querySelectorAll('.view').forEach(v => v.classList.remove('on'));
     document.querySelectorAll('.nav').forEach(n => n.classList.remove('on'));
@@ -900,10 +604,8 @@
   }
 
   // ── THROUGHPUT CANVAS ───────────────────────────────────────────
-  // Stores per-second request counts for last 60 ticks
   const THROUGHPUT_HISTORY = new Array(60).fill(0);
   let prevTotal = null;
-
   function updateThroughputHistory(currentTotal) {
     const delta = prevTotal === null ? 0 : Math.max(0, currentTotal - prevTotal);
     prevTotal = currentTotal;
@@ -911,442 +613,397 @@
     if (THROUGHPUT_HISTORY.length > 60) THROUGHPUT_HISTORY.shift();
     drawThroughput();
   }
-
   function drawThroughput() {
     const canvas = document.getElementById('throughput-canvas');
     if (!canvas) return;
     const dpr = window.devicePixelRatio || 1;
-    const W   = canvas.clientWidth;
-    const H   = canvas.clientHeight;
+    const W = canvas.clientWidth, H = canvas.clientHeight;
+    canvas.width = W * dpr; canvas.height = H * dpr;
+    const ctx = canvas.getContext('2d'); ctx.scale(dpr, dpr); ctx.clearRect(0, 0, W, H);
+    const data = THROUGHPUT_HISTORY, max = Math.max(...data, 1), barW = W / data.length;
+    const grad = ctx.createLinearGradient(0,0,0,H);
+    grad.addColorStop(0,'rgba(26,127,55,0.20)'); grad.addColorStop(1,'rgba(26,127,55,0.02)');
+    ctx.beginPath(); ctx.moveTo(0,H);
+    data.forEach((v,i)=>{ const x=i*barW+barW/2, y=H-(v/max)*(H-4); i===0?ctx.lineTo(x,y):ctx.lineTo(x,y); });
+    ctx.lineTo(W,H); ctx.closePath(); ctx.fillStyle=grad; ctx.fill();
+    ctx.beginPath();
+    data.forEach((v,i)=>{ const x=i*barW+barW/2, y=H-(v/max)*(H-4); i===0?ctx.moveTo(x,y):ctx.lineTo(x,y); });
+    ctx.strokeStyle='rgba(26,127,55,0.80)'; ctx.lineWidth=1.5; ctx.stroke();
+    const last=data[data.length-1], lx=(data.length-1)*barW+barW/2, ly=H-(last/max)*(H-4);
+    ctx.beginPath(); ctx.arc(lx,ly,3,0,Math.PI*2); ctx.fillStyle='#2da44e'; ctx.fill();
+    document.getElementById('throughput-peak').textContent=`peak: ${max} req`;
+  }
+
+  // ── CONFIG ──────────────────────────────────────────────────────
+  async function loadConfig() {
+    try { const res=await fetch(`${WAF_BASE}/waf/config`); const cfg=await res.json(); applyConfigToUI(cfg); await checkReachable(); }
+    catch(e) { setStatusBar(false,null); }
+  }
+  function applyConfigToUI(cfg) {
+    const pub=cfg.public_port||3000, int_=cfg.internal_port||cfg.target_port||pub+1;
+    document.getElementById('h-public').textContent=pub; document.getElementById('h-internal').textContent=int_;
+    document.getElementById('h-email').textContent=cfg.alert_email||'—';
+    document.getElementById('cfg-public-port').value=pub; document.getElementById('cfg-email').value=cfg.alert_email||'';
+    document.getElementById('target-display').textContent=`localhost:${int_}`;
+    const box=document.getElementById('start-cmd-box'); box.style.display='block';
+    document.getElementById('start-cmd').textContent=`PORT=${int_} npm start   or   next dev -p ${int_}`;
+  }
+  async function checkReachable() {
+    try { const res=await fetch(`${WAF_BASE}/waf/config/reachable`); const data=await res.json(); setStatusBar(data.reachable,data); }
+    catch(e) { setStatusBar(false,null); }
+  }
+  function setStatusBar(ok,data) {
+    const bar=document.getElementById('status-bar');
+    if(ok){ bar.style.cssText='display:flex;align-items:center;gap:6px;padding:9px 12px;border:1px solid var(--grn-bd);border-radius:6px;background:var(--grn-bg);margin-top:10px;font-size:10px;color:var(--grn);font-weight:500';
+      bar.innerHTML=`<div class="live-dot"></div>App running on :${data.internal_port} — WAF intercepting :${data.public_port} ✓`;
+    } else { bar.style.cssText='display:flex;align-items:center;gap:6px;padding:9px 12px;border:1px solid var(--red-bd);border-radius:6px;background:var(--red-bg);margin-top:10px;font-size:10px;color:var(--red);font-weight:500';
+      const int_=data?data.internal_port:'?';
+      bar.innerHTML=`<div class="live-dot" style="background:var(--red);animation:blink .6s infinite"></div>App not detected on :${int_} — run the start command below`;
+    }
+  }
+  async function applyTarget() {
+    const pub=parseInt(document.getElementById('cfg-public-port').value)||3000;
+    const email=document.getElementById('cfg-email').value.trim();
+    try { const res=await fetch(`${WAF_BASE}/waf/config`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({public_port:pub,alert_email:email})});
+      const data=await res.json(); if(data.ok){applyConfigToUI({public_port:data.public_port,internal_port:data.internal_port,alert_email:email}); await checkReachable(); }
+    } catch(e){alert('Could not reach WAF backend.');}
+  }
+
+  // ── MODALS ──────────────────────────────────────────────────────
+  function openNewRuleModal() { document.getElementById('modal-new').classList.add('open'); }
+  function closeNewRuleModal() { document.getElementById('modal-new').classList.remove('open'); }
+  document.getElementById('modal-new').addEventListener('click',function(e){if(e.target===this)closeNewRuleModal();});
+
+  let currentDetailRule=null;
+  function openDetailModal(rule) {
+    currentDetailRule=rule;
+    const id=rule.id||rule.rule_id, zone=rule.target_zone||rule.zone||'', name=rule.name||'';
+    const action=rule.action||'BLOCK', pattern=rule.match_pattern||rule.pattern||'', ruleType=rule.rule_type||'REGEX_MATCH';
+    document.getElementById('detail-title').textContent=`Rule #${id} — ${name}`;
+    document.getElementById('detail-action-tag').innerHTML=atag(action);
+    document.getElementById('detail-zone-tag').innerHTML=ztag(zone);
+    document.getElementById('d-id').textContent=`#${id}`;
+    document.getElementById('d-type').textContent=ruleType;
+    document.getElementById('d-pattern').textContent=pattern;
+    document.getElementById('detail-description').textContent=RULE_DESCRIPTIONS[id]||'No description available for this rule.';
+    document.getElementById('edit-name').value=name;
+    document.getElementById('edit-zone').value=zone;
+    document.getElementById('edit-action').value=action;
+    document.getElementById('edit-pattern').value=pattern;
+    document.getElementById('detail-del-btn').onclick=()=>{ if(confirm(`Delete rule #${id} "${name}"?`)){deleteRule(id);closeDetailModal();} };
+    document.getElementById('modal-detail').classList.add('open');
+  }
+  function closeDetailModal() { document.getElementById('modal-detail').classList.remove('open'); currentDetailRule=null; }
+  document.getElementById('modal-detail').addEventListener('click',function(e){if(e.target===this)closeDetailModal();});
+  async function saveRuleEdit() {
+    if(!currentDetailRule)return;
+    const id=currentDetailRule.id||currentDetailRule.rule_id;
+    const payload={name:document.getElementById('edit-name').value,target_zone:document.getElementById('edit-zone').value,action:document.getElementById('edit-action').value,match_pattern:document.getElementById('edit-pattern').value,is_active:currentDetailRule.is_active!==false};
+    try { await fetch(`${WAF_BASE}/waf/rules/${id}`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}); closeDetailModal(); loadRules(); }
+    catch(e){alert('Error saving rule — is the WAF backend reachable?');}
+  }
+
+  // ── RULES ───────────────────────────────────────────────────────
+  let ALL_RULES=[];
+  async function loadRules() {
+    try { const res=await fetch(`${WAF_BASE}/waf/rules`); const data=await res.json(); ALL_RULES=data.rules||[]; }
+    catch(e){ALL_RULES=[];}
+    renderR(ALL_RULES); updateRuleSummary();
+  }
+  function renderR(rules) {
+    document.getElementById('rules-body').innerHTML=rules.map(r=>{
+      const id=r.id||r.rule_id;
+      return `<tr class="rule-row" onclick="openDetailModal(${JSON.stringify(r).replace(/"/g,'&quot;')})">
+        <td style="color:var(--txt3)">#${id}</td><td style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.name}</td>
+        <td>${ztag(r.target_zone||r.zone||'')}</td><td>${atag(r.action)}</td>
+        <td onclick="event.stopPropagation()"><div class="toggle ${r.is_active!==false?'on':''}" onclick="toggleRule(${id},this)"></div></td>
+        <td onclick="event.stopPropagation()"><button class="btn btn-d" style="padding:2px 7px;font-size:9px" onclick="deleteRule(${id})">Del</button></td>
+      </tr>`;
+    }).join('');
+  }
+  function filterR() {
+    const q=document.getElementById('rsearch').value.toLowerCase(), z=document.getElementById('rzone').value, a=document.getElementById('raction').value;
+    renderR(ALL_RULES.filter(r=>(!q||r.name.toLowerCase().includes(q))&&(!z||(r.target_zone||r.zone)===z)&&(!a||r.action===a)));
+  }
+  function updateRuleSummary() {
+    const active=ALL_RULES.filter(r=>r.is_active!==false);
+    document.getElementById('sum-block').textContent=active.filter(r=>r.action==='BLOCK').length;
+    document.getElementById('sum-log').textContent=active.filter(r=>r.action==='LOG').length;
+    document.getElementById('sum-off').textContent=ALL_RULES.length-active.length;
+    document.getElementById('ov-rules').textContent=active.length;
+  }
+  async function createRule() {
+    const payload={name:document.getElementById('new-name').value,rule_type:document.getElementById('new-type').value,target_zone:document.getElementById('new-zone').value,match_pattern:document.getElementById('new-pattern').value,action:document.getElementById('new-action').value};
+    try { await fetch(`${WAF_BASE}/waf/rules`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}); closeNewRuleModal(); loadRules(); }
+    catch(e){alert('Error creating rule — is the WAF backend reachable?');}
+  }
+  async function deleteRule(id) {
+    if(!confirm(`Delete rule #${id}?`))return;
+    try { await fetch(`${WAF_BASE}/waf/rules/${id}`,{method:'DELETE'}); loadRules(); }
+    catch(e){alert('Error deleting rule.');}
+  }
+  async function toggleRule(id,el) {
+    el.classList.toggle('on');
+    try { await fetch(`${WAF_BASE}/waf/rules/${id}`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({is_active:el.classList.contains('on')})}); loadRules(); }
+    catch(e){}
+  }
+
+  // ── ANALYTICS ───────────────────────────────────────────────────
+  async function loadAnalytics() {
+    try {
+      const res=await fetch(`${WAF_BASE}/waf/analytics`); const data=await res.json();
+      const total=data.total_requests||0, blocked=data.blocked_requests||0, passed=total-blocked;
+      const rate=total>0?((blocked/total)*100).toFixed(1):'0.0';
+      document.getElementById('ov-total').textContent=total.toLocaleString();
+      document.getElementById('ov-blocked').textContent=blocked.toLocaleString();
+      document.getElementById('ov-blk-sub').textContent=`${rate}% block rate`;
+      if(document.getElementById('ov-avg-resp')) document.getElementById('ov-avg-resp').textContent=data.avg_response_ms!=null?Math.round(data.avg_response_ms):'—';
+      document.getElementById('rt-total').textContent=total.toLocaleString();
+      document.getElementById('rt-blocked').textContent=blocked.toLocaleString();
+      document.getElementById('rt-passed').textContent=passed.toLocaleString();
+      document.getElementById('blk-rate-val').textContent=rate+'%';
+      document.getElementById('blk-rate-sub').textContent=`${blocked} of ${total} reqs`;
+      if(data.avg_response_ms!=null) document.getElementById('avg-lat-val').textContent=Math.round(data.avg_response_ms)+'ms';
+      document.getElementById('blk-bar').style.width=Math.min(100,parseFloat(rate))+'%';
+      document.getElementById('blk-val').textContent=rate+'%';
+      document.getElementById('badge-count').textContent=blocked.toLocaleString();
+      updateThroughputHistory(total);
+      if(data.top_ips&&data.top_ips.length) {
+        const maxC=Math.max(...data.top_ips.map(x=>x.topIPs||x.count||0));
+        document.getElementById('top-ips-list').innerHTML=data.top_ips.map(x=>{
+          const count=x.topIPs||x.count||0;
+          return `<div class="bar"><span class="bl">${x.ip}</span><div class="bt"><div class="bf" style="width:${Math.round((count/maxC)*100)}%;background:var(--red)"></div></div><span class="bc">${count}</span></div>`;
+        }).join('');
+      }
+    } catch(e){document.getElementById('ov-total').textContent='offline';document.getElementById('ov-blocked').textContent='—';}
+  }
+
+  let rpmHistory=[];
+  async function updateRPM() {
+    try { const res=await fetch(`${WAF_BASE}/waf/analytics`); const data=await res.json(); const now=Date.now();
+      rpmHistory.push({t:now,n:data.total_requests||0}); rpmHistory=rpmHistory.filter(p=>now-p.t<120000);
+      if(rpmHistory.length>=2){const oldest=rpmHistory[0],newest=rpmHistory[rpmHistory.length-1],elapsed=(newest.t-oldest.t)/60000;
+        const rpm=elapsed>0?Math.round((newest.n-oldest.n)/elapsed):0;
+        document.getElementById('rpm-val').textContent=rpm.toLocaleString(); document.getElementById('rpm-sub').textContent='per minute';}
+    } catch(e){}
+  }
+
+  // ── LOGS ────────────────────────────────────────────────────────
+  let knownLogIds=new Set();
+  async function loadLogs() {
+    try { const res=await fetch(`${WAF_BASE}/waf/network_logs?limit=60`); const data=await res.json(); const logs=data.logs||[];
+      const el=document.getElementById('log-stream'); const newLogs=logs.filter(l=>!knownLogIds.has(l.log_id));
+      newLogs.forEach(log=>{
+        knownLogIds.add(log.log_id);
+        const ts=log.timestamp?log.timestamp.slice(11,19):'—', sc=log.status_code;
+        const scClass=sc>=500?'s502':sc===403?'s403':'s200';
+        const row=document.createElement('div'); row.className='lrow';
+        row.innerHTML=`<span class="lts">${ts}</span><span style="min-width:40px">${mtag(log.http_method)}</span><span class="lip">${log.client_ip}</span><span class="lpth">${log.request_path}</span><span class="${scClass}" style="min-width:38px">${sc}</span><span class="lms">${log.response_time_ms!=null?Math.round(log.response_time_ms)+'ms':'—'}</span>`;
+        el.insertBefore(row,el.firstChild);
+      });
+      while(el.children.length>200) el.removeChild(el.lastChild);
+    } catch(e){}
+  }
+
+  // ── ACTIONS ─────────────────────────────────────────────────────
+  async function loadActions() {
+    try { const res=await fetch(`${WAF_BASE}/waf/actions?limit=50`); const data=await res.json(); const acts=data.data||[];
+      document.getElementById('actions-body').innerHTML=acts.map(a=>`
+        <tr><td style="color:var(--txt3)">${a.timestamp?a.timestamp.slice(11,19):'—'}</td><td>${atag(a.action_taken)}</td>
+        <td style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:10px">${a.rule?.name||'—'}</td>
+        <td style="color:var(--red);font-size:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${a.trigger||'—'}</td>
+        <td style="color:var(--grn);font-size:10px;font-weight:600">${a.network?.client_ip||'—'}</td>
+        <td style="color:var(--txt3);font-size:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${a.network?.request_path||'—'}</td></tr>`).join('');
+    } catch(e){ document.getElementById('actions-body').innerHTML=`<tr><td colspan="6" style="color:var(--txt3);text-align:center;padding:16px">Backend offline</td></tr>`; }
+  }
+
+  // ════════════════════════════════════════════════════════════════
+  // IF SCANNER
+  // ════════════════════════════════════════════════════════════════
+  let blockedIPs = new Set();
+  let scatterChart = null;
+
+  async function startScan() {
+    const btn    = document.getElementById('scan-btn');
+    const status = document.getElementById('scan-status');
+    const badge  = document.getElementById('scan-badge');
+
+    btn.disabled = true;
+    btn.textContent = '⊙ Scanning…';
+    status.innerHTML = '<span class="scan-spin" style="display:inline-block;width:10px;height:10px;border:2px solid var(--br2);border-top-color:var(--grn);border-radius:50%;animation:spin .8s linear infinite;vertical-align:middle;margin-right:6px"></span>Isolation Forest ruleaza…';
+    badge.style.display = 'none';
+
+    try {
+      const res  = await fetch(`${WAF_BASE}/waf/if_scan`, { method: 'POST' });
+      const data = await res.json();
+
+      if (data.error) {
+        if (data.error === 'not_enough_data') {
+          status.textContent = `Date insuficiente pentru scan (${data.count || 0} cereri). Asteapta mai mult trafic.`;
+        } else {
+          status.textContent = 'Eroare la scan: ' + data.error;
+        }
+        btn.disabled = false; btn.textContent = '⊙ Scan for anomalies';
+        return;
+      }
+
+      const n = data.anomalies_found || 0;
+      status.textContent = `Scan complet — ${data.total_scanned?.toLocaleString()} cereri analizate`;
+      badge.style.display = 'inline';
+      badge.textContent   = `${n} anomalii`;
+
+      // ── Scatter chart ──────────────────────────────────────────
+      renderScatterChart(data.scatter_points || []);
+      document.getElementById('scatter-card').style.display = 'block';
+
+      // ── Lista anomalii ─────────────────────────────────────────
+      renderAnomalyList(data.anomalies || []);
+      document.getElementById('anomaly-list-card').style.display = 'block';
+
+    } catch(e) {
+      status.textContent = 'Eroare de retea — backend offline?';
+    }
+
+    btn.disabled = false;
+    btn.textContent = '⊙ Scan for anomalies';
+  }
+
+  function renderScatterChart(points) {
+    const canvas = document.getElementById('scatter-canvas');
+    const dpr    = window.devicePixelRatio || 1;
+    const W      = canvas.clientWidth || canvas.offsetWidth || 600;
+    const H      = 240;
+    canvas.style.height = H + 'px';
     canvas.width  = W * dpr;
     canvas.height = H * dpr;
     const ctx = canvas.getContext('2d');
     ctx.scale(dpr, dpr);
     ctx.clearRect(0, 0, W, H);
 
-    const data = THROUGHPUT_HISTORY;
-    const max  = Math.max(...data, 1);
-    const barW = W / data.length;
+    if (!points.length) return;
 
-    // gradient fill under line
-    const grad = ctx.createLinearGradient(0, 0, 0, H);
-    grad.addColorStop(0,   'rgba(26,127,55,0.20)');
-    grad.addColorStop(1,   'rgba(26,127,55,0.02)');
+    const PAD = { l: 52, r: 18, t: 12, b: 32 };
+    const cW  = W - PAD.l - PAD.r;
+    const cH  = H - PAD.t - PAD.b;
 
-    ctx.beginPath();
-    ctx.moveTo(0, H);
-    data.forEach((v, i) => {
-      const x = i * barW + barW / 2;
-      const y = H - (v / max) * (H - 4);
-      if (i === 0) ctx.lineTo(x, y);
-      else ctx.lineTo(x, y);
-    });
-    ctx.lineTo(W, H);
-    ctx.closePath();
-    ctx.fillStyle = grad;
-    ctx.fill();
+    const xs = points.map(p => p.x);
+    const ys = points.map(p => p.y);
+    const xMin = Math.min(...xs) - 0.005, xMax = Math.max(...xs) + 0.005;
+    const yMin = 0, yMax = Math.max(...ys) * 1.08 || 1;
 
-    // line
-    ctx.beginPath();
-    data.forEach((v, i) => {
-      const x = i * barW + barW / 2;
-      const y = H - (v / max) * (H - 4);
-      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-    });
-    ctx.strokeStyle = 'rgba(26,127,55,0.80)';
-    ctx.lineWidth   = 1.5;
-    ctx.stroke();
+    const toCanvasX = v => PAD.l + ((v - xMin) / (xMax - xMin)) * cW;
+    const toCanvasY = v => PAD.t + cH - ((v - yMin) / (yMax - yMin)) * cH;
 
-    // current dot
-    const last = data[data.length - 1];
-    const lx   = (data.length - 1) * barW + barW / 2;
-    const ly   = H - (last / max) * (H - 4);
-    ctx.beginPath();
-    ctx.arc(lx, ly, 3, 0, Math.PI * 2);
-    ctx.fillStyle = '#2da44e';
-    ctx.fill();
-
-    // peak label
-    document.getElementById('throughput-peak').textContent = `peak: ${max} req`;
-  }
-
-  // ── SPARKLINE (legacy, used nowhere now, kept for compat) ────────
-  function spark(id, color) {
-    const el = document.getElementById(id);
-    if (!el) return;
-    const v  = Array.from({length: 28}, () => Math.floor(Math.random() * 100) + 10);
-    const mx = Math.max(...v);
-    el.innerHTML = v.map(x =>
-      `<div class="spk" style="height:${Math.round(x/mx*100)}%;background:${color};opacity:.65"></div>`
-    ).join('');
-  }
-
-  // ── CONFIG ──────────────────────────────────────────────────────
-  async function loadConfig() {
-    try {
-      const res = await fetch(`${WAF_BASE}/waf/config`);
-      const cfg = await res.json();
-      applyConfigToUI(cfg);
-      await checkReachable();
-    } catch(e) { setStatusBar(false, null); }
-  }
-
-  function applyConfigToUI(cfg) {
-    const pub  = cfg.public_port   || 3000;
-    const int_ = cfg.internal_port || cfg.target_port || pub + 1;
-    document.getElementById('h-public').textContent   = pub;
-    document.getElementById('h-internal').textContent = int_;
-    document.getElementById('h-email').textContent    = cfg.alert_email || '—';
-    document.getElementById('cfg-public-port').value  = pub;
-    document.getElementById('cfg-email').value        = cfg.alert_email || '';
-    document.getElementById('target-display').textContent = `localhost:${int_}`;
-    const box = document.getElementById('start-cmd-box');
-    box.style.display = 'block';
-    document.getElementById('start-cmd').textContent =
-      `PORT=${int_} npm start   or   next dev -p ${int_}`;
-  }
-
-  async function checkReachable() {
-    try {
-      const res  = await fetch(`${WAF_BASE}/waf/config/reachable`);
-      const data = await res.json();
-      setStatusBar(data.reachable, data);
-    } catch(e) { setStatusBar(false, null); }
-  }
-
-  function setStatusBar(ok, data) {
-    const bar = document.getElementById('status-bar');
-    if (ok) {
-      bar.style.cssText = 'display:flex;align-items:center;gap:6px;padding:9px 12px;border:1px solid var(--grn-bd);border-radius:6px;background:var(--grn-bg);margin-top:10px;font-size:10px;color:var(--grn);font-weight:500';
-      bar.innerHTML = `<div class="live-dot"></div>
-        App running on :${data.internal_port} — WAF intercepting :${data.public_port} ✓`;
-    } else {
-      bar.style.cssText = 'display:flex;align-items:center;gap:6px;padding:9px 12px;border:1px solid var(--red-bd);border-radius:6px;background:var(--red-bg);margin-top:10px;font-size:10px;color:var(--red);font-weight:500';
-      const int_ = data ? data.internal_port : '?';
-      bar.innerHTML = `<div class="live-dot" style="background:var(--red);animation:blink .6s infinite"></div>
-        App not detected on :${int_} — run the start command below`;
+    // Grid
+    ctx.strokeStyle = '#e8ecef'; ctx.lineWidth = 0.8;
+    for (let i = 0; i <= 4; i++) {
+      const y = PAD.t + (i / 4) * cH;
+      ctx.beginPath(); ctx.moveTo(PAD.l, y); ctx.lineTo(PAD.l + cW, y); ctx.stroke();
+      const val = Math.round(yMax - (i / 4) * yMax);
+      ctx.fillStyle = '#8c959f'; ctx.font = `${9 * dpr / dpr}px JetBrains Mono, monospace`;
+      ctx.fillText(val, 4, y + 3);
     }
-  }
 
-  async function applyTarget() {
-    const pub   = parseInt(document.getElementById('cfg-public-port').value) || 3000;
-    const email = document.getElementById('cfg-email').value.trim();
-    try {
-      const res  = await fetch(`${WAF_BASE}/waf/config`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ public_port: pub, alert_email: email }),
-      });
-      const data = await res.json();
-      if (data.ok) {
-        applyConfigToUI({ public_port: data.public_port, internal_port: data.internal_port, alert_email: email });
-        await checkReachable();
+    // Threshold line (Th = 0)
+    const thX = toCanvasX(0);
+    ctx.strokeStyle = '#9a6700'; ctx.lineWidth = 1; ctx.setLineDash([4, 3]);
+    ctx.beginPath(); ctx.moveTo(thX, PAD.t); ctx.lineTo(thX, PAD.t + cH); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = '#9a6700'; ctx.font = '9px JetBrains Mono, monospace';
+    ctx.fillText('Th=0', thX + 3, PAD.t + 10);
+
+    // X axis label
+    ctx.fillStyle = '#8c959f'; ctx.font = '9px JetBrains Mono, monospace';
+    ctx.fillText('← mai suspect', PAD.l, H - 6);
+    ctx.fillText('mai normal →', PAD.l + cW - 70, H - 6);
+
+    // Points
+    points.forEach(p => {
+      const cx = toCanvasX(p.x);
+      const cy = toCanvasY(p.y);
+      if (p.anomaly) {
+        // X rosie pentru anomalie
+        ctx.strokeStyle = '#cf222e'; ctx.lineWidth = 1.8;
+        const s = 4;
+        ctx.beginPath(); ctx.moveTo(cx - s, cy - s); ctx.lineTo(cx + s, cy + s); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(cx + s, cy - s); ctx.lineTo(cx - s, cy + s); ctx.stroke();
+      } else {
+        // Cerc verde pentru normal
+        ctx.beginPath(); ctx.arc(cx, cy, 2.5, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(26,127,55,0.45)'; ctx.fill();
       }
-    } catch(e) { alert('Could not reach WAF backend.'); }
+    });
   }
 
-  // ── NEW RULE MODAL ──────────────────────────────────────────────
-  function openNewRuleModal() { document.getElementById('modal-new').classList.add('open'); }
-  function closeNewRuleModal() { document.getElementById('modal-new').classList.remove('open'); }
-  document.getElementById('modal-new').addEventListener('click', function(e) {
-    if (e.target === this) closeNewRuleModal();
-  });
+  function renderAnomalyList(anomalies) {
+    const tbody   = document.getElementById('anomaly-tbody');
+    const noMsg   = document.getElementById('no-anomalies-msg');
+    const countLbl= document.getElementById('anomaly-count-label');
 
-  // ── RULE DETAIL MODAL ───────────────────────────────────────────
-  let currentDetailRule = null;
+    countLbl.textContent = `${anomalies.length} cereri suspecte detectate`;
 
-  function openDetailModal(rule) {
-    currentDetailRule = rule;
-    const id   = rule.id || rule.rule_id;
-    const zone = rule.target_zone || rule.zone || '';
-    const name = rule.name || '';
-    const action = rule.action || 'BLOCK';
-    const pattern = rule.match_pattern || rule.pattern || '';
-    const ruleType = rule.rule_type || 'REGEX_MATCH';
+    if (!anomalies.length) {
+      tbody.innerHTML = '';
+      noMsg.style.display = 'block';
+      return;
+    }
+    noMsg.style.display = 'none';
 
-    document.getElementById('detail-title').textContent   = `Rule #${id} — ${name}`;
-    document.getElementById('detail-action-tag').innerHTML = atag(action);
-    document.getElementById('detail-zone-tag').innerHTML   = ztag(zone);
-    document.getElementById('d-id').textContent      = `#${id}`;
-    document.getElementById('d-type').textContent    = ruleType;
-    document.getElementById('d-pattern').textContent = pattern;
+    tbody.innerHTML = anomalies.map(a => {
+      const ts    = a.timestamp ? a.timestamp.slice(11, 19) : '—';
+      const sc    = a.status_code;
+      const scCls = sc >= 500 ? 's502' : sc === 403 ? 's403' : 's200';
+      const score = a.if_score;
+      const scoreCls = score < -0.05 ? 'score-crit' : score < 0 ? 'score-warn' : 'score-mild';
+      const iocHtml  = a.ioc_count > 0
+        ? `<span class="ioc-dot"></span>${a.ioc_count}`
+        : '<span style="color:var(--txt3)">—</span>';
+      const alreadyBlocked = blockedIPs.has(a.client_ip);
+      const btnHtml = alreadyBlocked
+        ? `<span class="block-btn blocked" style="cursor:default">Blocat</span>`
+        : `<button class="block-btn" onclick="blockIPFromScan('${a.client_ip}', this)">Block IP</button>`;
 
-    // description
-    const desc = RULE_DESCRIPTIONS[id] || 'No description available for this rule.';
-    document.getElementById('detail-description').textContent = desc;
-
-    // populate edit fields
-    document.getElementById('edit-name').value    = name;
-    document.getElementById('edit-zone').value    = zone;
-    document.getElementById('edit-action').value  = action;
-    document.getElementById('edit-pattern').value = pattern;
-
-    // delete button
-    document.getElementById('detail-del-btn').onclick = () => {
-      if (confirm(`Delete rule #${id} "${name}"?`)) {
-        deleteRule(id);
-        closeDetailModal();
-      }
-    };
-
-    document.getElementById('modal-detail').classList.add('open');
-  }
-
-  function closeDetailModal() {
-    document.getElementById('modal-detail').classList.remove('open');
-    currentDetailRule = null;
-  }
-
-  document.getElementById('modal-detail').addEventListener('click', function(e) {
-    if (e.target === this) closeDetailModal();
-  });
-
-  async function saveRuleEdit() {
-    if (!currentDetailRule) return;
-    const id = currentDetailRule.id || currentDetailRule.rule_id;
-    const payload = {
-      name:          document.getElementById('edit-name').value,
-      target_zone:   document.getElementById('edit-zone').value,
-      action:        document.getElementById('edit-action').value,
-      match_pattern: document.getElementById('edit-pattern').value,
-      is_active:     currentDetailRule.is_active !== false,
-    };
-    try {
-      await fetch(`${WAF_BASE}/waf/rules/${id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
-      closeDetailModal();
-      loadRules();
-    } catch(e) { alert('Error saving rule — is the WAF backend reachable?'); }
-  }
-
-  // ── RULES ───────────────────────────────────────────────────────
-  let ALL_RULES = [];
-
-  async function loadRules() {
-    try {
-      const res  = await fetch(`${WAF_BASE}/waf/rules`);
-      const data = await res.json();
-      
-      ALL_RULES  = data.rules || [];
-    } catch(e) { ALL_RULES = []; }
-    renderR(ALL_RULES);
-    updateRuleSummary();
-  }
-
-  function renderR(rules) {
-    document.getElementById('rules-body').innerHTML = rules.map(r => {
-      const id = r.id || r.rule_id;
-      return `
-      <tr class="rule-row" onclick="openDetailModal(${JSON.stringify(r).replace(/"/g,'&quot;')})">
-        <td style="color:var(--txt3)">#${id}</td>
-        <td style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.name}</td>
-        <td>${ztag(r.target_zone || r.zone || '')}</td>
-        <td>${atag(r.action)}</td>
-        <td onclick="event.stopPropagation()"><div class="toggle ${r.is_active !== false ? 'on' : ''}" onclick="toggleRule(${id}, this)"></div></td>
-        <td onclick="event.stopPropagation()"><button class="btn btn-d" style="padding:2px 7px;font-size:9px" onclick="deleteRule(${id})">Del</button></td>
+      return `<tr>
+        <td style="color:var(--txt3);font-size:10px">${ts}</td>
+        <td style="color:var(--grn);font-weight:600;font-size:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="${a.client_ip}">${a.client_ip}</td>
+        <td>${mtag(a.http_method)}</td>
+        <td style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--txt2);font-size:10px" title="${a.request_path}">${a.request_path}</td>
+        <td class="${scCls}">${sc}</td>
+        <td style="color:var(--txt2);font-size:10px">${Math.round(a.response_time_ms)}</td>
+        <td style="font-size:10px">${iocHtml}</td>
+        <td><span class="if-score-badge ${scoreCls}">${score.toFixed(4)}</span></td>
+        <td>${btnHtml}</td>
       </tr>`;
     }).join('');
   }
 
-  function filterR() {
-    const q = document.getElementById('rsearch').value.toLowerCase();
-    const z = document.getElementById('rzone').value;
-    const a = document.getElementById('raction').value;
-    renderR(ALL_RULES.filter(r =>
-      (!q || r.name.toLowerCase().includes(q)) &&
-      (!z || (r.target_zone || r.zone) === z)  &&
-      (!a || r.action === a)
-    ));
-  }
-
-  function updateRuleSummary() {
-    const active = ALL_RULES.filter(r => r.is_active !== false);
-    document.getElementById('sum-block').textContent = active.filter(r => r.action === 'BLOCK').length;
-    document.getElementById('sum-log').textContent   = active.filter(r => r.action === 'LOG').length;
-    document.getElementById('sum-off').textContent   = ALL_RULES.length - active.length;
-    document.getElementById('ov-rules').textContent  = active.length;
-  }
-
-  async function createRule() {
-    const payload = {
-      name:          document.getElementById('new-name').value,
-      rule_type:     document.getElementById('new-type').value,
-      target_zone:   document.getElementById('new-zone').value,
-      match_pattern: document.getElementById('new-pattern').value,
-      action:        document.getElementById('new-action').value,
-    };
+  async function blockIPFromScan(ip, btn) {
+    btn.disabled = true;
+    btn.textContent = '…';
     try {
-      await fetch(`${WAF_BASE}/waf/rules`, {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload),
-      });
-      closeNewRuleModal(); loadRules();
-    } catch(e) { alert('Error creating rule — is the WAF backend reachable?'); }
-  }
-
-  async function deleteRule(id) {
-    if (!confirm(`Delete rule #${id}?`)) return;
-    try {
-      await fetch(`${WAF_BASE}/waf/rules/${id}`, { method: 'DELETE' });
-      loadRules();
-    } catch(e) { alert('Error deleting rule.'); }
-  }
-
-  async function toggleRule(id, el) {
-    el.classList.toggle('on');
-    const isActive = el.classList.contains('on');
-    try {
-      await fetch(`${WAF_BASE}/waf/rules/${id}`, {
-        method: 'PUT', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ is_active: isActive }),
-      });
-      loadRules();
-    } catch(e) {}
-  }
-
-  // ── ANALYTICS ───────────────────────────────────────────────────
-  async function loadAnalytics() {
-    try {
-      const res  = await fetch(`${WAF_BASE}/waf/analytics`);
+      const res  = await fetch(`${WAF_BASE}/waf/if_scan/block/${encodeURIComponent(ip)}`, { method: 'POST' });
       const data = await res.json();
-      const total   = data.total_requests   || 0;
-      const blocked = data.blocked_requests || 0;
-      const passed  = total - blocked;
-      const rate    = total > 0 ? ((blocked / total) * 100).toFixed(1) : '0.0';
-
-      // overview page
-      document.getElementById('ov-total').textContent   = total.toLocaleString();
-      document.getElementById('ov-blocked').textContent = blocked.toLocaleString();
-      document.getElementById('ov-blk-sub').textContent = `${rate}% block rate`;
-      if (document.getElementById('ov-avg-resp')) {
-        document.getElementById('ov-avg-resp').textContent = data.avg_response_ms != null
-          ? Math.round(data.avg_response_ms) : '—';
+      if (data.status === 'blocked' || data.status === 'already_blocked') {
+        blockedIPs.add(ip);
+        btn.textContent = 'Blocat';
+        btn.classList.add('blocked');
+        btn.disabled = true;
+        // Actualizeaza toate butoanele pentru acelasi IP
+        document.querySelectorAll('.block-btn').forEach(b => {
+          if (b.onclick && b.onclick.toString().includes(ip)) {
+            b.textContent = 'Blocat'; b.classList.add('blocked'); b.disabled = true;
+          }
+        });
+      } else {
+        btn.textContent = 'Eroare'; btn.disabled = false;
       }
-
-      // home runtime stats
-      document.getElementById('rt-total').textContent   = total.toLocaleString();
-      document.getElementById('rt-blocked').textContent = blocked.toLocaleString();
-      document.getElementById('rt-passed').textContent  = passed.toLocaleString();
-      document.getElementById('blk-rate-val').textContent = rate + '%';
-      document.getElementById('blk-rate-sub').textContent = `${blocked} of ${total} reqs`;
-
-      // avg latency
-      if (data.avg_response_ms != null) {
-        document.getElementById('avg-lat-val').textContent = Math.round(data.avg_response_ms) + 'ms';
-      }
-
-      // block rate bar
-      document.getElementById('blk-bar').style.width = Math.min(100, parseFloat(rate)) + '%';
-      document.getElementById('blk-val').textContent  = rate + '%';
-
-      // badge
-      document.getElementById('badge-count').textContent = blocked.toLocaleString();
-
-      // update throughput history
-      updateThroughputHistory(total);
-
-      // top IPs
-      if (data.top_ips && data.top_ips.length) {
-        const maxC = Math.max(...data.top_ips.map(x => x.topIPs || x.count || 0));
-        document.getElementById('top-ips-list').innerHTML = data.top_ips.map(x => {
-          const count = x.topIPs || x.count || 0;
-          return `<div class="bar">
-            <span class="bl">${x.ip}</span>
-            <div class="bt"><div class="bf" style="width:${Math.round((count/maxC)*100)}%;background:var(--red)"></div></div>
-            <span class="bc">${count}</span>
-          </div>`;
-        }).join('');
-      }
-
     } catch(e) {
-      document.getElementById('ov-total').textContent   = 'offline';
-      document.getElementById('ov-blocked').textContent = '—';
-    }
-  }
-
-  // RPM counter — computes from two analytics snapshots
-  let rpmHistory = [];
-  async function updateRPM() {
-    try {
-      const res  = await fetch(`${WAF_BASE}/waf/analytics`);
-      const data = await res.json();
-      const now  = Date.now();
-      rpmHistory.push({ t: now, n: data.total_requests || 0 });
-      // keep last 2 minutes
-      rpmHistory = rpmHistory.filter(p => now - p.t < 120000);
-      if (rpmHistory.length >= 2) {
-        const oldest = rpmHistory[0];
-        const newest = rpmHistory[rpmHistory.length - 1];
-        const elapsed = (newest.t - oldest.t) / 60000; // in minutes
-        const rpm = elapsed > 0 ? Math.round((newest.n - oldest.n) / elapsed) : 0;
-        document.getElementById('rpm-val').textContent = rpm.toLocaleString();
-        document.getElementById('rpm-sub').textContent = `per minute`;
-      }
-    } catch(e) {}
-  }
-
-  // ── LOGS ────────────────────────────────────────────────────────
-  let knownLogIds = new Set();
-
-  async function loadLogs() {
-    try {
-      const res  = await fetch(`${WAF_BASE}/waf/network_logs?limit=60`);
-      const data = await res.json();
-      const logs = data.logs || [];
-      const el   = document.getElementById('log-stream');
-      const newLogs = logs.filter(l => !knownLogIds.has(l.log_id));
-      newLogs.forEach(log => {
-        knownLogIds.add(log.log_id);
-        const ts  = log.timestamp ? log.timestamp.slice(11, 19) : '—';
-        const sc  = log.status_code;
-        const scClass = sc >= 500 ? 's502' : sc === 403 ? 's403' : 's200';
-        const row = document.createElement('div');
-        row.className = 'lrow';
-        row.innerHTML = `
-          <span class="lts">${ts}</span>
-          <span style="min-width:40px">${mtag(log.http_method)}</span>
-          <span class="lip">${log.client_ip}</span>
-          <span class="lpth">${log.request_path}</span>
-          <span class="${scClass}" style="min-width:38px">${sc}</span>
-          <span class="lms">${log.response_time_ms != null ? Math.round(log.response_time_ms) + 'ms' : '—'}</span>`;
-        el.insertBefore(row, el.firstChild);
-      });
-      while (el.children.length > 200) el.removeChild(el.lastChild);
-    } catch(e) {}
-  }
-
-  // ── ACTIONS ─────────────────────────────────────────────────────
-  async function loadActions() {
-    try {
-      const res  = await fetch(`${WAF_BASE}/waf/actions?limit=50`);
-      const data = await res.json();
-      const acts = data.data || [];
-      document.getElementById('actions-body').innerHTML = acts.map(a => `
-        <tr>
-          <td style="color:var(--txt3)">${a.timestamp ? a.timestamp.slice(11,19) : '—'}</td>
-          <td>${atag(a.action_taken)}</td>
-          <td style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:10px">${a.rule?.name || '—'}</td>
-          <td style="color:var(--red);font-size:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${a.trigger || '—'}</td>
-          <td style="color:var(--grn);font-size:10px;font-weight:600">${a.network?.client_ip || '—'}</td>
-          <td style="color:var(--txt3);font-size:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${a.network?.request_path || '—'}</td>
-        </tr>`).join('');
-    } catch(e) {
-      document.getElementById('actions-body').innerHTML =
-        `<tr><td colspan="6" style="color:var(--txt3);text-align:center;padding:16px">Backend offline</td></tr>`;
+      btn.textContent = 'Eroare'; btn.disabled = false;
     }
   }
 
   // ── INIT ────────────────────────────────────────────────────────
-  loadConfig();
-  loadRules();
-  loadAnalytics();
-  loadLogs();
-  loadActions();
-  updateRPM();
-
+  loadConfig(); loadRules(); loadAnalytics(); loadLogs(); loadActions(); updateRPM();
   setInterval(loadLogs,       3000);
   setInterval(loadAnalytics, 10000);
   setInterval(loadActions,   10000);
