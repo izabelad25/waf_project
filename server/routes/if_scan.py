@@ -5,6 +5,8 @@ from db.logger import firewall_actions_buffer
 from db.init_db import add_new_rule
 from datetime import datetime
 import uuid
+
+from server.sanitize_data import sanitize_ip, sanitize_path
  
 if_scan_router = APIRouter()
  
@@ -41,13 +43,13 @@ async def block_ip_from_scan(client_ip: str):
         )
  
         firewall_actions_buffer.append((
-            str(uuid.uuid4()), current_time, trigger,
-            new_rule_id, "BLOCK", reason
+            str(uuid.uuid4()), current_time, sanitize_path(trigger),
+            new_rule_id, "BLOCK", sanitize_path(reason)
         ))
  
         return JSONResponse({
             "status":  "blocked",
-            "ip":      client_ip,
+            "ip":      sanitize_ip(client_ip),
             "rule_id": new_rule_id,
         })
     except Exception as e:

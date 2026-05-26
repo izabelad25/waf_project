@@ -12,6 +12,7 @@ import time
 
 from db.init_db import CACHE_IPS, CACHE_REGEX
 from db.logger import activity_logs_buffer, firewall_actions_buffer
+from server.sanitize_data import sanitize_ip, sanitize_path
 
 
 #proxy state from waf config
@@ -29,13 +30,14 @@ proxy_router = APIRouter()
 # Rules that must be evaluated against the RAW (un-decoded) path/query,
 # because their entire purpose is to detect encoding tricks.
 # All other rules run against the fully-decoded values.
-RAW_PATH_RULES  = {1, 32}   # Block Double URL Encoding (PATH)
-RAW_QUERY_RULES = {3, 33}   # Block Double URL Encoding (QUERY)
+
 
 #log only function for log only rules
 async def _log_only(rule_id: int, trigger: str, request_id: str, timestamp):
     #await log_action(timestamp, request_id, rule_id, "LOG WARNING", trigger)
-    firewall_actions_buffer.append((str(uuid.uuid4()), timestamp, request_id, rule_id, "LOG WARNING", trigger))
+    firewall_actions_buffer.append((str(uuid.uuid4()), timestamp, request_id, rule_id, "LOG WARNING", sanitize_path(trigger)))
+
+
 
 # this prevents HTTP VERB TAMPERING
 @proxy_router.api_route("/{path:path}", methods=["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS", "HEAD"])
@@ -73,9 +75,9 @@ async def reverse_proxy(request: Request, path: str):
         #                    full_path, 403, user_agent, 0.0)
         # await log_action(timestamp, request_id, rule_id, "BLOCK", trigger)
 
-        activity_logs_buffer.append((request_id, timestamp, client_ip, method,
-                            full_path, 403, user_agent, 0.0))
-        firewall_actions_buffer.append((str(uuid.uuid4()), timestamp, request_id, rule_id, "BLOCK", trigger))
+        activity_logs_buffer.append((request_id, timestamp, sanitize_ip(client_ip), method,
+                            sanitize_path(full_path), 403, user_agent, 0.0))
+        firewall_actions_buffer.append((str(uuid.uuid4()), timestamp, request_id, rule_id, "BLOCK", sanitize_path(trigger)))
 
         return JSONResponse({"error": "Access denied!"}, status_code=403)
 
@@ -93,7 +95,7 @@ async def reverse_proxy(request: Request, path: str):
     # sequences (%2e%2e%2f) are normalised before matching.
 
     for rule in CACHE_REGEX['PATH']:
-        target = raw_path if rule['rule_id'] in RAW_PATH_RULES else full_path
+        target = full_path
         match  = rule['pattern'].search(target)
         if match:
             if rule['action'] == 'BLOCK':
@@ -107,14 +109,10 @@ async def reverse_proxy(request: Request, path: str):
     # malformed characters that an empty-looking string can still contain.
 
     for rule in CACHE_REGEX['QUERY_STRING']:
-        is_raw_rule = int(rule.get('rule_id', -1)) in RAW_QUERY_RULES
         
-        target = raw_query if is_raw_rule else query_string
-        
-        if is_raw_rule and raw_query:
-            target = f"?{target}"
-            
-        search_target = target.lower() if is_raw_rule else target
+        target =  query_string
+           
+        search_target = target
         match = rule['pattern'].search(search_target)
         
         if match:
@@ -219,8 +217,8 @@ async def reverse_proxy(request: Request, path: str):
 
     # await log_activity(request_id, timestamp, client_ip, method,
     #                    full_path, status_code, user_agent, response_time_ms)
-    activity_logs_buffer.append((request_id, timestamp, client_ip, method,
-                       full_path, status_code, user_agent, response_time_ms))
+    activity_logs_buffer.append((request_id, timestamp, sanitize_ip(client_ip), method,
+                       sanitize_path(full_path), status_code, user_agent, response_time_ms))
 
     return StreamingResponse(
         target_resp.aiter_raw(),
