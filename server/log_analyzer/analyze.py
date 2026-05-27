@@ -6,7 +6,7 @@ from db.logger import firewall_actions_buffer
 from db.init_db import add_new_rule
 from .alert import sendMail
 
-from server.sanitize_data import sanitize_ip, sanitize_path
+from sanitize_data import sanitize_ip, sanitize_path
 
 def block_and_log(ip: str, trigger: str, reason: str, current_time):
         CACHE_IPS.add(ip)
@@ -140,6 +140,7 @@ async def analyzer():
         cursor = None 
     
         try: 
+            print("analyzer running...")
             cursor = db.cursor()
             current_time = datetime.now()
 

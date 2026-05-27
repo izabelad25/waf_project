@@ -3,6 +3,7 @@ from pydantic import BaseModel
 from db.init_db import db, CACHE_IPS, CACHE_REGEX, reload_cache
 from typing import Optional
 import regex
+from sanitize_data import sanitize_ip, sanitize_path
 
 rule_router = APIRouter()
 
@@ -118,6 +119,9 @@ async def create_rule(rule: RuleCreate):
         )
     #autoincrement pt next id
     next_id = db.execute("SELECT COALESCE(MAX(rule_id), 0) + 1 FROM rules").fetchone()[0]
+    if(rule.rule_type == 'IP_MATCH'):
+        db.execute("INSERT INTO rules (rule_id, name, rule_type, target_zone, match_pattern, action, is_active)" \
+        "VALUES (?, ?, ?, ?, ?, ?, ?)", (next_id, rule.name, rule.rule_type, rule.target_zone, sanitize_ip(rule.match_pattern), rule.action, True))
 
     db.execute("INSERT INTO rules (rule_id, name, rule_type, target_zone, match_pattern, action, is_active)" \
     "VALUES (?, ?, ?, ?, ?, ?, ?)", (next_id, rule.name, rule.rule_type, rule.target_zone, rule.match_pattern, rule.action, True))
@@ -167,7 +171,9 @@ async def update_rule(rule_id: int, updates: RuleUpdate):
     )
 
     if pattern_changing or zone_changing:
-        validate_regex(effective_pattern)
+
+        if current_type == 'REGEX':
+            validate_regex(effective_pattern)
         conflicts = check_conflicts(effective_zone, effective_pattern, updates.action or "BLOCK", exclude_id=rule_id)
 
         if conflicts:
