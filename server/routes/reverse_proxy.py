@@ -12,7 +12,7 @@ import time
 
 from db.init_db import CACHE_IPS, CACHE_REGEX
 from db.logger import activity_logs_buffer, firewall_actions_buffer
-from sanitize_data import sanitize_ip, sanitize_path
+from server.db.sanitize_data import sanitize_ip, sanitize_path
 
 
 #proxy state from waf config
@@ -70,10 +70,6 @@ async def reverse_proxy(request: Request, path: str):
     # helper: block & log 
     async def block_request(rule_id: int, trigger: str, reason: str):
         print(f"[WAF BLOCK] IP={client_ip} | rule={rule_id} | trigger={trigger!r} | reason={reason}")
-
-        # await log_activity(request_id, timestamp, client_ip, method,
-        #                    full_path, 403, user_agent, 0.0)
-        # await log_action(timestamp, request_id, rule_id, "BLOCK", trigger)
 
         activity_logs_buffer.append((request_id, timestamp, sanitize_ip(client_ip), method,
                             sanitize_path(full_path), 403, user_agent, 0.0))
