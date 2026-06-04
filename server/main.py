@@ -30,7 +30,7 @@ from routes.reverse_proxy import proxy_router
 from routes.waf_config import config_router, init_proxy_state, load_config, save_config, PROXY_STATE
 from routes.if_scan import if_scan_router
 #port binding + setup
-from port_config import get_internal_port, is_port_free, print_instructions
+from port_config import is_port_free, print_instructions
 import sys
 
 
@@ -139,27 +139,27 @@ async def shutdown_listener():
 # 2 SERVERS LAUNCHER
 async def main():
     cfg = load_config()
-    public_port = cfg.get("public_port", 3000)        
-    internal_port = get_internal_port(public_port)      
+    target_port = cfg.get("target_port", 3000)        
+         
     dashboard_port = 8000
 
-    if not is_port_free(public_port):
-        print(f"\nPort {public_port} is already in use.")
-        print(f"your app is probably still running on {public_port}...")
+    if not is_port_free(target_port):
+      
+        
         print(f"please read the instructions :) ")
-        print(f"      WAF needs to own :{public_port} to intercept traffic.\n")
+       
         sys.exit(1)
  
-    print_instructions(public_port, internal_port)
+    print_instructions(target_port)
 
-    cfg["target_port"] = internal_port
+    cfg["target_port"] = target_port
     cfg["target_host"] = "localhost"
 
     
     save_config(cfg)
     PROXY_STATE["config"] = cfg
     PROXY_STATE["client"] = httpx.AsyncClient(
-        base_url=f"http://127.0.0.1:{internal_port}", timeout=15.0
+        base_url=f"http://127.0.0.1:{target_port}", timeout=15.0
     )
 
 
@@ -180,7 +180,7 @@ async def main():
 
    
     print(f" Open Firewall Dashboard   ->  http://127.0.0.1:8000")
-    #print(f"  Proxy               ->  http://127.0.0.1:8080")
+    print(f" Reverse Proxy             ->  http://127.0.0.1:8080")
 
     #test email alert
     

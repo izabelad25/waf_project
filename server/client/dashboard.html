@@ -200,7 +200,7 @@ textarea{resize:vertical;min-height:52px}
   <span class="pill">secure web apps!</span>
   <div class="top-right">
     <div class="live"><div class="live-dot"></div>waf active</div>
-    <div class="top-info">dashboard <b>:8000</b> / waf proxy <b>:8080</b> → <b id="target-display">web_app_host:3000</b></div>
+    <div class="top-info">dashboard <b>:8000</b> / waf proxy <b>:8080</b> &rarr; <b id="target-display">web app :&hellip;</b></div>
   </div>
 </div>
 
@@ -231,7 +231,7 @@ textarea{resize:vertical;min-height:52px}
       <div class="box-title">Proxy target</div>
       
       
-      <div class="status-bar" id="status-bar"><div class="live-dot"></div>Checking…</div>
+      <div class="status-bar" id="status-bar"><div class="live-dot"></div>Checking&hellip;</div>
       <div class="cmd-box" id="start-cmd-box">
         <div class="cmd-box-label">forward client to port -> 8080 & run your web application</div>
         <span id="start-cmd"></span>
@@ -239,7 +239,7 @@ textarea{resize:vertical;min-height:52px}
       <div style="margin-top:9px;display:flex;flex-direction:column;gap:5px">
         <div style="display:flex;align-items:center;gap:8px">
           <span style="font-size:9px;color:var(--txt3);min-width:76px;text-transform:uppercase;letter-spacing:.7px">App (backend) port</span>
-          <input type="number" id="cfg-public-port" value="3000" min="1024" max="65534" style="width:76px">
+          <input type="number" id="cfg-target-port" value="3000" min="1024" max="65534" style="width:76px">
         </div>
         <div style="display:flex;align-items:center;gap:8px">
           <span style="font-size:9px;color:var(--txt3);min-width:76px;text-transform:uppercase;letter-spacing:.7px">Alert email</span>
@@ -251,29 +251,29 @@ textarea{resize:vertical;min-height:52px}
     <div class="box">
       <div class="box-title">Runtime stats</div>
       <div class="g3" style="margin-bottom:9px">
-        <div class="stat"><div class="stat-label">Req/min</div><div class="stat-val" id="rpm-val">–</div></div>
-        <div class="stat"><div class="stat-label">Block rate</div><div class="stat-val" id="blk-rate-val" style="color:var(--red)">–</div></div>
-        <div class="stat"><div class="stat-label">Avg ms</div><div class="stat-val" id="avg-lat-val">–</div></div>
+        <div class="stat"><div class="stat-label">Req/min</div><div class="stat-val" id="rpm-val">&ndash;</div></div>
+        <div class="stat"><div class="stat-label">Block rate</div><div class="stat-val" id="blk-rate-val" style="color:var(--red)">&ndash;</div></div>
+        <div class="stat"><div class="stat-label">Avg ms</div><div class="stat-val" id="avg-lat-val">&ndash;</div></div>
       </div>
       <div class="g3">
-        <div class="stat"><div class="stat-label">Total</div><div class="stat-val" id="rt-total" style="font-size:15px">–</div></div>
-        <div class="stat"><div class="stat-label">Blocked</div><div class="stat-val" id="rt-blocked" style="font-size:15px;color:var(--red)">–</div></div>
-        <div class="stat"><div class="stat-label">Passed</div><div class="stat-val" id="rt-passed" style="font-size:15px">–</div></div>
+        <div class="stat"><div class="stat-label">Total</div><div class="stat-val" id="rt-total" style="font-size:15px">&ndash;</div></div>
+        <div class="stat"><div class="stat-label">Blocked</div><div class="stat-val" id="rt-blocked" style="font-size:15px;color:var(--red)">&ndash;</div></div>
+        <div class="stat"><div class="stat-label">Passed</div><div class="stat-val" id="rt-passed" style="font-size:15px">&ndash;</div></div>
       </div>
       <div class="sep"></div>
       <div class="box-title">Throughput</div>
       <div class="tp-wrap"><canvas id="throughput-canvas" class="tp-canvas"></canvas><span class="tp-peak" id="tp-peak"></span></div>
       <div style="display:flex;justify-content:space-between;margin-top:2px"><span style="font-size:8px;color:var(--txt3)">60s ago</span><span style="font-size:8px;color:var(--txt3)">now</span></div>
       <div class="sep"></div>
-      <div class="bar"><span class="bl">Block rate</span><div class="bt"><div class="bf" style="background:var(--red);width:0%" id="blk-bar"></div></div><span class="bc" id="blk-val">–</span></div>
+      <div class="bar"><span class="bl">Block rate</span><div class="bt"><div class="bf" style="background:var(--red);width:0%" id="blk-bar"></div></div><span class="bc" id="blk-val">&ndash;</span></div>
     </div>
   </div>
   <div class="box">
     <div class="box-title">Rules summary</div>
     <div class="g3" style="margin-bottom:0">
-      <div class="stat" style="text-align:center"><div class="stat-val" id="sum-block" style="color:var(--red)">–</div><div class="stat-sub">BLOCK rules</div></div>
-      <div class="stat" style="text-align:center"><div class="stat-val" id="sum-log" style="color:var(--amb)">–</div><div class="stat-sub">LOG rules</div></div>
-      <div class="stat" style="text-align:center"><div class="stat-val" id="sum-off" style="color:var(--txt3)">–</div><div class="stat-sub">disabled</div></div>
+      <div class="stat" style="text-align:center"><div class="stat-val" id="sum-block" style="color:var(--red)">&ndash;</div><div class="stat-sub">BLOCK rules</div></div>
+      <div class="stat" style="text-align:center"><div class="stat-val" id="sum-log" style="color:var(--amb)">&ndash;</div><div class="stat-sub">LOG rules</div></div>
+      <div class="stat" style="text-align:center"><div class="stat-val" id="sum-off" style="color:var(--txt3)">&ndash;</div><div class="stat-sub">disabled</div></div>
     </div>
   </div>
 </div>
@@ -283,10 +283,10 @@ textarea{resize:vertical;min-height:52px}
   <div class="ph">Analytics</div>
   <div class="ps">traffic overview</div>
   <div class="g4">
-    <div class="stat"><div class="stat-label">Total requests</div><div class="stat-val" id="ov-total">–</div></div>
-    <div class="stat"><div class="stat-label">Blocked</div><div class="stat-val" id="ov-blocked" style="color:var(--red)">–</div><div class="stat-sub" id="ov-blk-sub"></div></div>
-    <div class="stat"><div class="stat-label">Active rules</div><div class="stat-val" id="ov-rules">–</div></div>
-    <div class="stat"><div class="stat-label">Average response</div><div class="stat-val" id="ov-avg-resp">–</div><div class="stat-sub">ms</div></div>
+    <div class="stat"><div class="stat-label">Total requests</div><div class="stat-val" id="ov-total">&ndash;</div></div>
+    <div class="stat"><div class="stat-label">Blocked</div><div class="stat-val" id="ov-blocked" style="color:var(--red)">&ndash;</div><div class="stat-sub" id="ov-blk-sub"></div></div>
+    <div class="stat"><div class="stat-label">Active rules</div><div class="stat-val" id="ov-rules">&ndash;</div></div>
+    <div class="stat"><div class="stat-label">Average response</div><div class="stat-val" id="ov-avg-resp">&ndash;</div><div class="stat-sub">ms</div></div>
   </div>
   <div class="g2">
     <div class="box"><div class="box-title">Top IPs</div><div id="top-ips-list"><span style="color:var(--txt3);font-size:10px">No data</span></div></div>
@@ -316,7 +316,7 @@ textarea{resize:vertical;min-height:52px}
   <div class="ph">Firewall Rules</div>
   <div class="ps">filtering rules for web traffic</div>
   <div class="row-filter">
-    <input type="text" id="rsearch" placeholder="Filter by name…" oninput="filterR()" style="max-width:180px">
+    <input type="text" id="rsearch" placeholder="Filter by name&hellip;" oninput="filterR()" style="max-width:180px">
     <select id="rzone" onchange="filterR()" style="width:auto">
       <option value="">All zones</option>
       <option>PATH</option><option>QUERY_STRING</option><option>HEADERS</option><option>BODY</option>
@@ -361,8 +361,8 @@ textarea{resize:vertical;min-height:52px}
     <div class="box-title">anomaly score / response time -> normal vs anomaly</div>
     <pre class="sc-plot" id="scatter-ascii"></pre>
     <div style="display:flex;gap:14px;margin-top:5px;font-size:9px;color:var(--txt3)">
-      <span class="sc-n" style="font-weight:700">·</span> Normal &nbsp;
-      <span class="sc-a" style="font-weight:700">✕</span> Anomaly &nbsp;
+      <span class="sc-n" style="font-weight:700">&middot;</span> Normal &nbsp;
+      <span class="sc-a" style="font-weight:700">&#10005;</span> Anomaly &nbsp;
       <span style="margin-left:auto">X = IF score / Y = RT ms / line = threshold </span>
     </div>
   </div>
@@ -492,7 +492,7 @@ function toast(msg,type='err'){
   t.style.display='block';clearTimeout(t._t);t._t=setTimeout(()=>t.style.display='none',3500);
 }
 function ztag(z){const m={PATH:'t-path',QUERY_STRING:'t-qs',HEADERS:'t-hdr',BODY:'t-body'};return`<span class="tag ${m[z]||''}">${z}</span>`}
-function atag(a){return`<span class="tag ${a==='BLOCK'?'t-blk':'t-log'}">${a||'–'}</span>`}
+function atag(a){return`<span class="tag ${a==='BLOCK'?'t-blk':'t-log'}">${a||'\u2013'}</span>`}
 function mtag(m){const c={GET:'mget',POST:'mpost',PUT:'mput',DELETE:'mdel'};return`<span class="${c[m]||''}">${m}</span>`}
 function sv(name,el){
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('on'));
@@ -523,27 +523,30 @@ function drawTP(){
 // CONFIG
 async function loadConfig(){try{const r=await fetch(`${WAF}/waf/config`);const c=await r.json();applyUI(c);await checkReachable();}catch{setBar(false,null);}}
 function applyUI(c){
-  const pub=c.public_port||3000,int_=c.internal_port||c.target_port||pub+1;
-  document.getElementById('h-public').textContent=pub;
-  document.getElementById('h-internal').textContent=int_;
-  document.getElementById('h-email').textContent=c.alert_email||'–';
-  document.getElementById('cfg-public-port').value=pub;
+  // single forward port
+  const port=c.target_port||3000;
+  document.getElementById('cfg-target-port').value=port;
   document.getElementById('cfg-email').value=c.alert_email||'';
-  document.getElementById('target-display').textContent=`localhost:${int_}`;
-  const b=document.getElementById('start-cmd-box');b.style.display='block';
-  document.getElementById('start-cmd').textContent=`PORT=${int_} npm start  ·  next dev -p ${int_}`;
+  document.getElementById('target-display').textContent=`web app :${port}`;
+ 
 }
 async function checkReachable(){try{const r=await fetch(`${WAF}/waf/config/reachable`);const d=await r.json();setBar(d.reachable,d);}catch{setBar(false,null);}}
 function setBar(ok,d){
   const b=document.getElementById('status-bar');
-  if(ok){b.style.borderColor='var(--br)';b.style.background='var(--bg2)';b.style.color='var(--grn)';b.innerHTML=`<div class="live-dot"></div>App :${d.internal_port} · WAF :${d.public_port} OK`;}
-  else{b.style.borderColor='var(--red)';b.style.background='var(--bg)';b.style.color='var(--red)';const p=d?d.internal_port:'?';b.innerHTML=`Target not found -> forward client(frontend) to :8080 port and run your web application !`;}
+  if(ok){
+    const port=d.target_port;
+    b.style.borderColor='var(--br)';b.style.background='var(--bg2)';b.style.color='var(--grn)';
+    b.innerHTML=`<div class="live-dot"></div>WAF :8080 \u2192 web app :${port} OK`;
+  }else{
+    b.style.borderColor='var(--red)';b.style.background='var(--bg)';b.style.color='var(--red)';
+    b.innerHTML=`Target not found -> forward client (frontend) to :8080 and run your web app !`;
+  }
 }
 async function applyTarget(){
-  const pub=parseInt(document.getElementById('cfg-public-port').value)||3000;
+  const port=parseInt(document.getElementById('cfg-target-port').value)||3000;
   const email=document.getElementById('cfg-email').value.trim();
-  try{const r=await fetch(`${WAF}/waf/config`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({public_port:pub,alert_email:email})});
-    const d=await r.json();if(d.ok){applyUI({public_port:d.public_port,internal_port:d.internal_port,alert_email:email});await checkReachable();toast('Config saved','ok');}
+  try{const r=await fetch(`${WAF}/waf/config`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({target_port:port,alert_email:email})});
+    const d=await r.json();if(d.ok){applyUI({target_port:d.target_port,alert_email:email});await checkReachable();toast('Config saved','ok');}
   }catch{toast('Cannot reach WAF backend');}
 }
 
@@ -557,12 +560,12 @@ function openDetailModal(rule){
   _rule=rule;
   const id=rule.id||rule.rule_id,zone=rule.target_zone||rule.zone||'';
   const isDef=DEFAULT_IDS.has(id);
-  document.getElementById('detail-title').textContent=`Rule #${id} — ${rule.name}`;
+  document.getElementById('detail-title').textContent=`Rule #${id} \u2014 ${rule.name}`;
   document.getElementById('detail-action-tag').innerHTML=atag(rule.action);
   document.getElementById('detail-zone-tag').innerHTML=ztag(zone);
   document.getElementById('d-id').textContent=`#${id}`;
   document.getElementById('d-type').textContent=rule.rule_type||'REGEX_MATCH';
-  document.getElementById('d-pattern').textContent=rule.match_pattern||rule.pattern||'–';
+  document.getElementById('d-pattern').textContent=rule.match_pattern||rule.pattern||'\u2013';
   document.getElementById('detail-description').textContent=isDef?'Default WAF protection rule.':'Custom rule.';
   document.getElementById('edit-name').value=rule.name||'';
   document.getElementById('edit-zone').value=zone;
@@ -684,7 +687,7 @@ async function updateRPM(){
   try{const r=await fetch(`${WAF}/waf/analytics`);const d=await r.json();const now=Date.now();
     rpmH.push({t:now,n:d.total_requests||0});rpmH=rpmH.filter(p=>now-p.t<120000);
     if(rpmH.length>=2){const o=rpmH[0],n=rpmH[rpmH.length-1],e=(n.t-o.t)/60000;
-      document.getElementById('rpm-val').textContent=e>0?Math.round((n.n-o.n)/e):'–';}
+      document.getElementById('rpm-val').textContent=e>0?Math.round((n.n-o.n)/e):'\u2013';}
   }catch{}
 }
 
@@ -695,10 +698,10 @@ async function loadLogs(){
     const el=document.getElementById('log-stream');
     (d.logs||[]).filter(l=>!knownLogs.has(l.log_id)).forEach(log=>{
       knownLogs.add(log.log_id);
-      const ts=log.timestamp?log.timestamp.slice(11,19):'–',sc=log.status_code;
+      const ts=log.timestamp?log.timestamp.slice(11,19):'\u2013',sc=log.status_code;
       const scC=sc>=500?'s5xx':sc===403?'s403':'s200';
       const row=document.createElement('div');row.className='lrow';
-      row.innerHTML=`<span class="lts">${ts}</span><span style="min-width:34px">${mtag(log.http_method)}</span><span class="lip">${log.client_ip}</span><span class="lpth">${log.request_path}</span><span class="${scC}" style="min-width:34px">${sc}</span><span class="lms">${log.response_time_ms!=null?Math.round(log.response_time_ms):'–'}</span>`;
+      row.innerHTML=`<span class="lts">${ts}</span><span style="min-width:34px">${mtag(log.http_method)}</span><span class="lip">${log.client_ip}</span><span class="lpth">${log.request_path}</span><span class="${scC}" style="min-width:34px">${sc}</span><span class="lms">${log.response_time_ms!=null?Math.round(log.response_time_ms):'\u2013'}</span>`;
       el.insertBefore(row,el.firstChild);
     });
     while(el.children.length>200)el.removeChild(el.lastChild);
@@ -709,12 +712,12 @@ async function loadLogs(){
 async function loadActions(){
   try{const r=await fetch(`${WAF}/waf/actions?limit=50`);const d=await r.json();
     document.getElementById('actions-body').innerHTML=(d.data||[]).map(a=>`<tr>
-      <td style="color:var(--txt3)">${a.timestamp?a.timestamp.slice(11,19):'–'}</td>
+      <td style="color:var(--txt3)">${a.timestamp?a.timestamp.slice(11,19):'\u2013'}</td>
       <td>${atag(a.action_taken)}</td>
-      <td style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:10px">${a.rule?.name||'–'}</td>
-      <td style="color:var(--red);font-size:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${a.trigger||'–'}</td>
-      <td style="font-size:10px;font-weight:500">${a.network?.client_ip||'–'}</td>
-      <td style="color:var(--txt3);font-size:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${a.network?.request_path||'–'}</td>
+      <td style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:10px">${a.rule?.name||'\u2013'}</td>
+      <td style="color:var(--red);font-size:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${a.trigger||'\u2013'}</td>
+      <td style="font-size:10px;font-weight:500">${a.network?.client_ip||'\u2013'}</td>
+      <td style="color:var(--txt3);font-size:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${a.network?.request_path||'\u2013'}</td>
     </tr>`).join('');
   }catch{document.getElementById('actions-body').innerHTML=`<tr><td colspan="6" style="text-align:center;color:var(--txt3);padding:12px">Backend offline</td></tr>`;}
 }
@@ -725,7 +728,7 @@ async function startScan(){
   const btn=document.getElementById('scan-btn');
   const status=document.getElementById('scan-status');
   const badge=document.getElementById('scan-badge');
-  btn.disabled=true;btn.textContent='Scanning…';
+  btn.disabled=true;btn.textContent='Scanning\u2026';
   status.innerHTML='<span class="scan-spin"></span>detection model is processing the requests...';
   badge.style.display='none';
   try{
@@ -738,7 +741,7 @@ async function startScan(){
       btn.disabled=false;btn.textContent='Scan for anomalies';return;
     }
     const n=data.anomalies_found||0;
-    status.textContent=`Complete scan !! — ${(data.total_scanned||0).toLocaleString()} analyzed HTTP requests`;
+    status.textContent=`Complete scan !! \u2014 ${(data.total_scanned||0).toLocaleString()} analyzed HTTP requests`;
     badge.style.display='inline';badge.textContent=`${n} anomalies`;
     renderScatter(data.scatter_points||[]);
     document.getElementById('scatter-card').style.display='block';
@@ -775,16 +778,16 @@ function renderScatter(pts){
 
   // threshold line at IF score = 0
   const thCol=cx(0);
-  for(let r=0;r<H;r++)grid[r][thCol]={ch:'│',cls:'sc-th'};
+  for(let r=0;r<H;r++)grid[r][thCol]={ch:'\u2502',cls:'sc-th'};
 
   // normal points first (don't overwrite anomalies)
   pts.filter(p=>!p.anomaly).forEach(p=>{
     const r=cy(p.y),c=cx(p.x),cell=grid[r][c];
-    if(!cell||cell.cls==='sc-th')grid[r][c]={ch:'·',cls:'sc-n'};
+    if(!cell||cell.cls==='sc-th')grid[r][c]={ch:'\u00b7',cls:'sc-n'};
   });
   // anomalies on top
   pts.filter(p=>p.anomaly).forEach(p=>{
-    grid[cy(p.y)][cx(p.x)]={ch:'✕',cls:'sc-a'};
+    grid[cy(p.y)][cx(p.x)]={ch:'\u2715',cls:'sc-a'};
   });
 
   // Y-axis tick rows -> label values
@@ -798,14 +801,14 @@ function renderScatter(pts){
   let out='';
   for(let r=0;r<H;r++){
     const lbl=(yLabel[r]||'').padStart(LBL-1)+' ';
-    out+=`<span class="sc-ax">${lbl}┤</span>`;
+    out+=`<span class="sc-ax">${lbl}\u2524</span>`;
     for(let c=0;c<W;c++)out+=cell(grid[r][c]);
     out+='\n';
   }
   // bottom axis
   let axis='';
-  for(let c=0;c<W;c++)axis+=(c===thCol?'┬':'─');
-  out+=`<span class="sc-ax">${' '.repeat(LBL)}└${axis}</span>\n`;
+  for(let c=0;c<W;c++)axis+=(c===thCol?'\u252c':'\u2500');
+  out+=`<span class="sc-ax">${' '.repeat(LBL)}\u2514${axis}</span>\n`;
   // X-axis labels
   let xrow=Array(LBL+1+W).fill(' ');
   const putX=(v,txt)=>{
@@ -838,12 +841,12 @@ function renderAnomalies(list){
   const rows=[];
   for(const a of list){
     const tr=document.createElement('tr');
-    const ts=a.timestamp?a.timestamp.slice(11,19):'–';
+    const ts=a.timestamp?a.timestamp.slice(11,19):'\u2013';
     const sc=a.status_code;
     const scC=sc>=500?'s5xx':sc===403?'s403':'s200';
     const score=typeof a.if_score==='number'?a.if_score:parseFloat(a.if_score)||0;
     const sC=score<-.05?'if-crit':score<0?'if-warn':'if-ok';
-    const ioc=a.ioc_count>0?`<span class="ioc-dot"></span>${a.ioc_count}`:'–';
+    const ioc=a.ioc_count>0?`<span class="ioc-dot"></span>${a.ioc_count}`:'\u2013';
     const done=blockedIPs.has(a.client_ip);
     const btnHTML=done
       ?`<span class="block-btn done">Blocked</span>`
@@ -870,7 +873,7 @@ document.getElementById('anomaly-tbody').addEventListener('click',function(e){
 });
  
 async function blockIP(ip,btn){
-  btn.disabled=true;btn.textContent='…';
+  btn.disabled=true;btn.textContent='\u2026';
   try{
     const r=await fetch(`${WAF}/waf/if_scan/block/${encodeURIComponent(ip)}`,{method:'POST'});
     const d=await r.json();

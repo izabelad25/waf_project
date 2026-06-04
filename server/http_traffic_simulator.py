@@ -7,7 +7,7 @@ import http.client
 
 PROXY_HOST  = "127.0.0.1"
 PROXY_PORT  = 8080          # portul proxy WAF 
-DELAY       = 0.05          # 50ms intre cereri (20 req/sec)
+DELAY       = 0.5          # 50ms intre cereri (20 req/sec)
 
 CSV_PATH    = os.path.join(
     os.path.dirname(os.path.abspath(__file__)),
