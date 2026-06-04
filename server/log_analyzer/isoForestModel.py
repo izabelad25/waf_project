@@ -41,12 +41,12 @@ IOC = [
     "javascript:",
     "document.cookie",
     "alert[(]",
-    # --- Path traversal & LFI ---
-    "../",                   # POSIX traversal
-    "..\\",                  # Windows traversal
-    "%2e%2e",                # URL-encoded ..
-    "%2f..",                 # URL-encoded /..
-    "%252f",                 # double-encoded /
+    # --- Path traversal ---
+    "../",                   
+    "..\\",                  
+    "%2e%2e",               
+    "%2f..",                 
+    "%252f",                 
     "etc/passwd",
     "etc/shadow",
     "etc/hosts",
@@ -59,7 +59,7 @@ IOC = [
     ";wget",
     ";curl",
     "$[(]id[)]",
-    # --- Scanner / programmatic UAs (inactive pe acest dataset, utile pe live) ---
+    # --- Scanners ---
     "sqlmap", "nikto", "nmap", "wget/", "python-urllib", "curl/",
     "acunetix", "burp"
 ]
@@ -215,3 +215,32 @@ f1_tr = print_metrics("TRAIN", y_true_train, y_pred_train)
 f1_te = print_metrics("TEST",  y_true_test,  y_pred_test)
 print(f"\n  {'OK' if f1_tr >= f1_te else 'nu e ok'} TRAIN F1 ({f1_tr:.4f}) >= TEST F1 ({f1_te:.4f})")
 
+
+# import matplotlib.pyplot as plt
+# from sklearn.metrics import ConfusionMatrixDisplay
+ 
+# fig, ax = plt.subplots(1, 2, figsize=(9, 4))
+# ConfusionMatrixDisplay.from_predictions(y_true_train, y_pred_train, ax=ax[0])
+# ax[0].set_title('Train')
+# ConfusionMatrixDisplay.from_predictions(y_true_test, y_pred_test, ax=ax[1])
+# ax[1].set_title('Test')
+# plt.tight_layout()
+# #plt.show()
+ 
+# # ---------- scatter: anomaly_score vs response_time ----------
+# mask_n = (y_true_test == 0)
+# mask_a = (y_true_test == 1)
+ 
+# plt.figure(figsize=(10, 6))
+# # normal: puncte verzi, mici, semi-transparente (fundal)
+# plt.scatter(anomaly_score_test[mask_n], data_test.loc[mask_n, 'field_e'],
+#             c='green', alpha=0.35, s=20, label='Trafic Normal')
+# # anomalii: X-uri rosii, mai mari, cu contur negru (foreground)
+# plt.scatter(anomaly_score_test[mask_a], data_test.loc[mask_a, 'field_e'],
+#             c='red', marker='X', s=30, linewidths=0.6,
+#             label='Anomalie')
+# plt.xlabel('anomaly_score')
+# plt.ylabel('response_time (ms)')
+# plt.title('Cereri normale vs anomalii (test)')
+# plt.legend()
+# plt.show()
