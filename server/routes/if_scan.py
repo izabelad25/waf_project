@@ -42,8 +42,9 @@ async def block_ip_from_scan(client_ip: str):
             "IP_MATCH", "IP", client_ip, action="BLOCK"
         )
  
+        
         firewall_actions_buffer.append((
-            str(uuid.uuid4()), current_time, sanitize_path(trigger),
+            str(uuid.uuid4()), current_time, None,
             new_rule_id, "BLOCK", sanitize_path(reason)
         ))
  

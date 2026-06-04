@@ -20,7 +20,7 @@ DB_PATH = os.path.join(
 )
 
 SAMPLE_FRAC               = None   # None = TOATE; 0.10 = 10%
-CLEAR_TABLES              = True   # goleste activity_logs + firewall_actions inainte
+
 POPULATE_FIREWALL_ACTIONS = True   # creeaza intrari in firewall_actions pentru BLOCK
 BATCH_SIZE                = 500
 SEED                      = 42
@@ -48,16 +48,13 @@ print("Fireball WAF — DB populator (DuckDB)")
 print(f"Source : {CSV_PATH}")
 print(f"Target : {DB_PATH}")
 print(f"Rows   : {total}")
-print(f"Clear  : {CLEAR_TABLES}   |   Firewall actions: {POPULATE_FIREWALL_ACTIONS}")
+
 print("─" * 52)
 
 #  conectare 
 db = duckdb.connect(DB_PATH)
 
-if CLEAR_TABLES:
-    # ordine: firewall_actions are FK logica catre activity_logs.log_id
-    db.execute("DELETE FROM firewall_actions;")
-    db.execute("DELETE FROM activity_logs;")
+
 
 #  INSERT statements (DuckDB syntax) 
 # `trigger` e cuvant rezervat -> il pun in ghilimele duble

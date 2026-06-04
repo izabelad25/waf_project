@@ -5,8 +5,8 @@ waf_actions_router = APIRouter()
 
 @waf_actions_router.get("/waf/actions")
 async def get_firewall_actions(limit: int= 50, offset: int=0):
-    #fetches every action the fw executed 
-    #left join to combine action, rule name and blocked IP
+    #fetches every action the fw executed
+    #left join to combine action, rule (name + pattern + type) and the request log
     query = "SELECT" \
     " fa.action_id," \
     " fa.timestamp," \
@@ -17,6 +17,8 @@ async def get_firewall_actions(limit: int= 50, offset: int=0):
     " fa.activity_log_id," \
     " al.client_ip," \
     " al.request_path," \
+    " r.match_pattern," \
+    " r.rule_type" \
     " FROM firewall_actions fa" \
     " LEFT JOIN rules r ON fa.rule_id = r.rule_id" \
     " LEFT JOIN activity_logs al ON fa.activity_log_id = al.log_id" \
@@ -30,6 +32,16 @@ async def get_firewall_actions(limit: int= 50, offset: int=0):
     #data format --> FRONTEND
     waf_actions_list = []
     for row in rows:
+        client_ip     = row[7]
+        request_path  = row[8]
+        match_pattern = row[9]
+        rule_type     = row[10]
+
+        # analyzer / scanner blocks are not tied to a single request log
+        # -> client_ip is taken from the IP rule pattern, path stays empty
+        if not client_ip and rule_type == 'IP_MATCH':
+            client_ip = match_pattern
+
         waf_actions_list.append({
             "action_id": row[0],
             "timestamp": row[1].isoformat() if row[1] else None,
@@ -41,8 +53,8 @@ async def get_firewall_actions(limit: int= 50, offset: int=0):
             },
             "network":{
                 "log_id": row[6],
-                "client_ip": row[7] or "Unknown IP address",
-                "request_path": row[8] or "Unknown Path"
+                "client_ip": client_ip or "",      # empty, not "Unknown"
+                "request_path": request_path or ""  # empty, not "Unknown"
             }
         })
 
@@ -59,27 +71,36 @@ async def get_firewall_actions(limit: int= 50, offset: int=0):
 #route for getting a single action --> for detailed view in front
 @waf_actions_router.get("/waf/actions/{action_id}")
 async def get_action_by_id(action_id: str):
-    query = "SELECT " \
-    "fa.action_id, fa.timestamp, fa.action_taken, fa.trigger," \
-    "r.name, al.client_ip, al.http_method, al.request_path, al.user_agent" \
-    "FROM firewall_actions fa" \
-    "LEFT JOIN rules r ON fa.rule_id = r.rule_id" \
-    "LEFT JOIN activity_logs al ON fa.activity_log_id = al.log_id" \
-    "WHERE fa.action_id = ?"
+    query = (
+        "SELECT "
+        "fa.action_id, fa.timestamp, fa.action_taken, fa.trigger, "
+        "r.name, r.match_pattern, r.rule_type, "
+        "al.client_ip, al.http_method, al.request_path, al.user_agent "
+        "FROM firewall_actions fa "
+        "LEFT JOIN rules r ON fa.rule_id = r.rule_id "
+        "LEFT JOIN activity_logs al ON fa.activity_log_id = al.log_id "
+        "WHERE fa.action_id = ?"
+    )
 
     row = db.execute(query, (action_id,)).fetchone()
 
     if not row:
         return {"error": "Action ID not found"}, 404
-    
+
+    client_ip     = row[7]
+    rule_type     = row[6]
+    match_pattern = row[5]
+    if not client_ip and rule_type == 'IP_MATCH':
+        client_ip = match_pattern
+
     return {
         "action_id": row[0],
         "timestamp": row[1].isoformat() if row[1] else None,
         "action_taken": row[2],
         "trigger": row[3],
         "rule_name": row[4],
-        "client_ip": row[5],
-        "http_method": row[6],
-        "request_path": row[7],
-        "user_agent": row[8]
+        "client_ip": client_ip or "",
+        "http_method": row[8] or "",
+        "request_path": row[9] or "",
+        "user_agent": row[10] or ""
     }

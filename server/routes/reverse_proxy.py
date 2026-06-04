@@ -21,20 +21,23 @@ from .waf_config import PROXY_STATE
 
 proxy_router = APIRouter()
 
-# target app URL ==> trb variabila globala env
-#PORT 3000 ==> protected app port
 
-# target_URL = "http://localhost:3000"
-# client = httpx.AsyncClient(base_url=target_URL)
-
-# Rules that must be evaluated against the RAW (un-decoded) path/query,
-# because their entire purpose is to detect encoding tricks.
-# All other rules run against the fully-decoded values.
+def _resolve_client_ip(request: Request) -> str:
+    # Honor a forwarded client IP when present (set by an upstream proxy or by
+    # the traffic simulator). Falls back to the real socket peer.
+    # NOTE: X-Forwarded-For is client-controllable -> in production only trust
+    # it from known upstreams. Fine for local testing / single-hop reverse proxy.
+    fwd = request.headers.get("x-forwarded-for")
+    if fwd:
+        return fwd.split(",")[0].strip()
+    real = request.headers.get("x-real-ip")
+    if real:
+        return real.strip()
+    return request.client.host
 
 
 #log only function for log only rules
 async def _log_only(rule_id: int, trigger: str, request_id: str, timestamp):
-    #await log_action(timestamp, request_id, rule_id, "LOG WARNING", trigger)
     firewall_actions_buffer.append((str(uuid.uuid4()), timestamp, request_id, rule_id, "LOG WARNING", sanitize_path(trigger)))
 
 
@@ -48,14 +51,11 @@ async def reverse_proxy(request: Request, path: str):
     request_id = str(uuid.uuid4())
     timestamp  = datetime.now()
 
-    client_ip  = request.client.host
+    client_ip  = _resolve_client_ip(request)
     method     = request.method
     user_agent = request.headers.get("user-agent", "Unknown")
 
     #  URL decoding 
-    # Keep the originals for:
-    #   1. Forwarding to the protected app (always send what the client sent)
-    #   2. Double-encoding detection rules (rules 32, 33)
     raw_path_bytes = request.scope.get("raw_path", b"")
     raw_path  = raw_path_bytes.decode("utf-8", errors="ignore")
 
@@ -85,45 +85,26 @@ async def reverse_proxy(request: Request, path: str):
         return await block_request(0, client_ip, "Blocked IP by FIREWALL rule")
 
     #  Check 2 = malicious PATH 
-
-    # Double-encoding rules (id in RAW_PATH_RULES) scan the raw undecoded path.
-    # Every other PATH rule scans the fully-decoded path so encoded traversal
-    # sequences (%2e%2e%2f) are normalised before matching.
-
     for rule in CACHE_REGEX['PATH']:
         target = full_path
         match  = rule['pattern'].search(target)
         if match:
             if rule['action'] == 'BLOCK':
                 return await block_request(rule['rule_id'], match.group(0), "Malicious path pattern detected")
-            #LOG-only rules  
             await _log_only(rule['rule_id'], match.group(0), request_id, timestamp)
 
     #  Check 3 = malicious QUERY STRING 
-
-    # Always run query checks even if the string is empty — some rules detect
-    # malformed characters that an empty-looking string can still contain.
-
     for rule in CACHE_REGEX['QUERY_STRING']:
-        
         target =  query_string
-           
         search_target = target
         match = rule['pattern'].search(search_target)
-        
         if match:
             if rule['action'] == 'BLOCK':
                 return await block_request(rule['rule_id'], match.group(0), "Malicious query string detected")
-            
             await _log_only(rule['rule_id'], match.group(0), request_id, timestamp)
 
 
     #  Check 4 = malicious HEADERS 
-
-    # Header values are never URL-encoded by browsers, so no unquote needed.
-    # We merge name + value into one string so patterns can optionally match
-    # on the header name (e.g. "Cookie: ... union select ...").
-
     for header_name, header_value in request.headers.items():
         merged_header = f"{header_name}: {header_value}"
         for rule in CACHE_REGEX['HEADERS']:
@@ -134,11 +115,6 @@ async def reverse_proxy(request: Request, path: str):
                 await _log_only(rule['rule_id'], match.group(0), request_id, timestamp)
 
     # Check 5 : malicious BODY 
-
-    # Only POST / PUT / PATCH can carry a body worth inspecting.
-    # We read the entire body once, run all BODY rules, then pass the raw bytes
-    # directly to the forwarded request — no stream-rebuilding hack needed.
-
     body_bytes: bytes = b""
 
     if method in ("POST", "PUT", "PATCH"):
@@ -155,11 +131,6 @@ async def reverse_proxy(request: Request, path: str):
                     await _log_only(rule['rule_id'], match.group(0), request_id, timestamp)
 
     # FORWARD clean traffic to the protected app
-     
-    # Always forward the ORIGINAL raw URL never the decoded version
-    # The protected app expects what the client actually sent
-
-    #live client from proxy state used
     client = PROXY_STATE.get("client")
 
     if client is None:
@@ -181,24 +152,19 @@ async def reverse_proxy(request: Request, path: str):
     headers = dict(request.headers)
     headers.pop("host", None)   # httpx sets the correct Host for the target
 
-
-    # Build the outgoing request.
-    # For methods with a body we pass body_bytes directly (already read above).
-    # For methods without a body we stream from the original request object.
     try:
 
         if method in ("POST", "PUT", "PATCH"):
             target_req = client.build_request(
                 method, url, headers=headers,
-                content=body_bytes          # bytes, not a stream (simplitate + sigurata)
+                content=body_bytes
             )
         else:
             target_req = client.build_request(
                 method, url, headers=headers,
-                content=request.stream()    # stream passthrough for GET/HEAD/etc.
+                content=request.stream()
             )
 
-    #  send & stream back the response 
         target_resp = await client.send(target_req, stream=True)
         status_code = target_resp.status_code
 
@@ -211,8 +177,6 @@ async def reverse_proxy(request: Request, path: str):
 
     response_time_ms = round((time.time() - start_time) * 1000, 2)
 
-    # await log_activity(request_id, timestamp, client_ip, method,
-    #                    full_path, status_code, user_agent, response_time_ms)
     activity_logs_buffer.append((request_id, timestamp, sanitize_ip(client_ip), method,
                        sanitize_path(full_path), status_code, user_agent, response_time_ms))
 

@@ -26,16 +26,19 @@ async def get_logs(limit: int = 100, offset: int = 0):
         })
     return {"logs": logs_list}
 
-#ROUTE FOR ANALYTICS ! (trb modificata mai tarziu)
+#ROUTE FOR ANALYTICS !
 @logs_router.get("/waf/analytics")
 async def get_log_stats():
     
     total_reqs = db.execute("SELECT COUNT(*) FROM activity_logs").fetchone()[0]
-    #fetch total reqs by req code
-        #trebuie refactored ca o functie sau ceva ca sa poti introduce codul ++ 
-        # ++ cateva standard ex: blocked reqs
+
     blocked_requests = db.execute("SELECT COUNT(*) FROM activity_logs WHERE status_code = 403").fetchone()[0]
-    
+
+    #avg response time == doar cererile forwardate (blocate au response_time 0.0)
+    avg_response_ms = db.execute(
+        "SELECT AVG(response_time_ms) FROM activity_logs WHERE response_time_ms > 0"
+    ).fetchone()[0]
+
     #top 3 cele mai active adrese ip 
     top_ips = db.execute(
         "SELECT client_ip, COUNT(*) as topIPs " \
@@ -45,11 +48,22 @@ async def get_log_stats():
         " LIMIT 3"
     ).fetchall()
 
+    #attack types == grupare a actiunilor de blocare dupa trigger
+    attack_types = db.execute(
+        "SELECT trigger, COUNT(*) as cnt "
+        " FROM firewall_actions "
+        " WHERE action_taken = 'BLOCK' AND trigger IS NOT NULL "
+        " GROUP BY trigger "
+        " ORDER BY cnt DESC "
+        " LIMIT 6"
+    ).fetchall()
+
     return{
         "total_requests": total_reqs,
         "blocked_requests": blocked_requests,
-        #trb completat cu requests in functie de cod
-        "top_ips": [{"ip": row[0], "topIPs": row[1]} for row in top_ips] 
+        "avg_response_ms": avg_response_ms,
+        "top_ips": [{"ip": row[0], "topIPs": row[1]} for row in top_ips],
+        "attack_types": [{"type": row[0], "count": row[1]} for row in attack_types],
     }
 
 

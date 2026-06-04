@@ -340,11 +340,13 @@ textarea{resize:vertical;min-height:52px}
   <div class="ph">Actions</div>
   <div class="ps">all firewall events</div>
   <div class="box" style="padding:0">
-    <table style="table-layout:fixed">
-      <colgroup><col style="width:62px"><col style="width:44px"><col style="width:124px"><col><col style="width:96px"><col style="width:114px"></colgroup>
-      <thead><tr><th>Time</th><th>Action</th><th>Rule</th><th>Trigger</th><th>IP</th><th>Path</th></tr></thead>
-      <tbody id="actions-body"></tbody>
-    </table>
+    <div style="overflow-x:auto">
+      <table style="table-layout:fixed;min-width:780px">
+        <colgroup><col style="width:62px"><col style="width:44px"><col style="width:140px"><col><col style="width:140px"><col style="width:160px"></colgroup>
+        <thead><tr><th>Time</th><th>Action</th><th>Rule</th><th>Trigger</th><th>IP</th><th>Path</th></tr></thead>
+        <tbody id="actions-body"></tbody>
+      </table>
+    </div>
   </div>
 </div>
 
@@ -438,9 +440,9 @@ textarea{resize:vertical;min-height:52px}
   <div class="modal">
     <div class="modal-title">New WAF rule</div>
     <div class="fr"><label class="fl">Name</label><input type="text" id="new-name" placeholder="e.g. Block SQLi in cookies"></div>
-    <div class="fr"><label class="fl">Rule type</label><select id="new-type"><option>REGEX_MATCH</option><option>IP_MATCH</option></select></div>
+    <div class="fr"><label class="fl">Rule type</label><select id="new-type" onchange="onNewTypeChange()"><option>REGEX_MATCH</option><option>IP_MATCH</option></select></div>
     <div class="fr"><label class="fl">Target zone</label><select id="new-zone"><option>PATH</option><option>QUERY_STRING</option><option>HEADERS</option><option>BODY</option></select></div>
-    <div class="fr"><label class="fl">Pattern</label><textarea id="new-pattern" placeholder="(?i)union[\s\/\*]+select"></textarea></div>
+    <div class="fr"><label class="fl" id="new-pattern-label">Pattern</label><textarea id="new-pattern" placeholder="(?i)union[\s\/\*]+select"></textarea></div>
     <div class="fr"><label class="fl">Action</label><select id="new-action"><option>BLOCK</option><option>LOG</option></select></div>
     <div class="ma">
       <button class="btn btn-sm" onclick="closeNewRuleModal()">Cancel</button>
@@ -466,15 +468,38 @@ textarea{resize:vertical;min-height:52px}
       <div class="edit-sec-title">Edit rule</div>
       <div class="default-notice" id="default-rule-notice">Default rules cannot be edited! only -> <b>action</b> and <b>active state</b></div>
       <div class="edit-row"><label>Name</label><input type="text" id="edit-name"></div>
-      <div class="edit-row"><label>Zone</label><select id="edit-zone"><option>PATH</option><option>QUERY_STRING</option><option>HEADERS</option><option>BODY</option></select></div>
+      <div class="edit-row"><label id="edit-zone-label">Zone</label><select id="edit-zone"><option>PATH</option><option>QUERY_STRING</option><option>HEADERS</option><option>BODY</option></select></div>
       <div class="edit-row"><label>Action</label><select id="edit-action"><option>BLOCK</option><option>LOG</option></select></div>
-      <div class="edit-row" style="align-items:flex-start"><label style="padding-top:3px">Pattern</label><textarea id="edit-pattern" style="min-height:56px"></textarea></div>
+      <div class="edit-row" style="align-items:flex-start"><label style="padding-top:3px" id="edit-pattern-label">Pattern</label><textarea id="edit-pattern" style="min-height:56px"></textarea></div>
     </div>
     <div class="ma">
       <button class="btn btn-d btn-sm" id="detail-del-btn">Delete</button>
       <div style="flex:1"></div>
       <button class="btn btn-sm" onclick="closeDetailModal()">Cancel</button>
       <button class="btn btn-p btn-sm" onclick="saveRuleEdit()">Save</button>
+    </div>
+  </div>
+</div>
+
+<!-- ACTION DETAIL MODAL -->
+<div class="modal-wrap" id="modal-action">
+  <div class="modal wide">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+      <div class="modal-title" style="margin-bottom:0">Action detail</div>
+      <span id="act-action-tag"></span>
+    </div>
+    <div class="rdf-grid">
+      <div class="rdf"><div class="rdf-label">Action ID</div><div class="rdf-val" id="act-id" style="word-break:break-all">-</div></div>
+      <div class="rdf"><div class="rdf-label">Time</div><div class="rdf-val" id="act-time">-</div></div>
+      <div class="rdf"><div class="rdf-label">Rule</div><div class="rdf-val" id="act-rule">-</div></div>
+      <div class="rdf"><div class="rdf-label">Rule ID</div><div class="rdf-val" id="act-ruleid">-</div></div>
+      <div class="rdf"><div class="rdf-label">Client IP</div><div class="rdf-val" id="act-ip">-</div></div>
+      <div class="rdf"><div class="rdf-label">Log ID</div><div class="rdf-val" id="act-logid" style="word-break:break-all">-</div></div>
+      <div class="rdf full"><div class="rdf-label">Trigger / reason</div><div class="pattern-box" id="act-trigger" style="color:var(--red)">-</div></div>
+      <div class="rdf full"><div class="rdf-label">Request path</div><div class="pattern-box" id="act-path">-</div></div>
+    </div>
+    <div class="ma">
+      <button class="btn btn-sm" onclick="closeActionModal()">Close</button>
     </div>
   </div>
 </div>
@@ -551,7 +576,33 @@ async function applyTarget(){
 }
 
 // MODALS
-function openNewRuleModal(){document.getElementById('modal-new').classList.add('open')}
+function onNewTypeChange(){
+  const t=document.getElementById('new-type').value;
+  const zone=document.getElementById('new-zone');
+  const pat=document.getElementById('new-pattern');
+  const patLabel=document.getElementById('new-pattern-label');
+  if(t==='IP_MATCH'){
+    // IP rules target the IP zone only — no PATH/QUERY/HEADERS/BODY
+    zone.innerHTML='<option>IP</option>';
+    zone.value='IP';zone.disabled=true;zone.style.opacity='.5';
+    pat.placeholder='e.g. 203.0.113.45';
+    patLabel.textContent='IP address';
+  }else{
+    zone.innerHTML='<option>PATH</option><option>QUERY_STRING</option><option>HEADERS</option><option>BODY</option>';
+    zone.disabled=false;zone.style.opacity='1';
+    pat.placeholder='(?i)union[\\s\\/\\*]+select';
+    patLabel.textContent='Pattern';
+  }
+}
+function openNewRuleModal(){
+  // reset fields each time
+  document.getElementById('new-name').value='';
+  document.getElementById('new-pattern').value='';
+  document.getElementById('new-type').value='REGEX_MATCH';
+  document.getElementById('new-action').value='BLOCK';
+  onNewTypeChange();
+  document.getElementById('modal-new').classList.add('open');
+}
 function closeNewRuleModal(){document.getElementById('modal-new').classList.remove('open')}
 document.getElementById('modal-new').addEventListener('click',function(e){if(e.target===this)closeNewRuleModal()});
 
@@ -560,6 +611,7 @@ function openDetailModal(rule){
   _rule=rule;
   const id=rule.id||rule.rule_id,zone=rule.target_zone||rule.zone||'';
   const isDef=DEFAULT_IDS.has(id);
+  const isIP=(rule.rule_type==='IP_MATCH');
   document.getElementById('detail-title').textContent=`Rule #${id} \u2014 ${rule.name}`;
   document.getElementById('detail-action-tag').innerHTML=atag(rule.action);
   document.getElementById('detail-zone-tag').innerHTML=ztag(zone);
@@ -568,7 +620,19 @@ function openDetailModal(rule){
   document.getElementById('d-pattern').textContent=rule.match_pattern||rule.pattern||'\u2013';
   document.getElementById('detail-description').textContent=isDef?'Default WAF protection rule.':'Custom rule.';
   document.getElementById('edit-name').value=rule.name||'';
-  document.getElementById('edit-zone').value=zone;
+
+  // zone select: IP rules use the IP zone only (no PATH/QUERY/HEADERS/BODY)
+  const zoneSel=document.getElementById('edit-zone');
+  const patLabel=document.getElementById('edit-pattern-label');
+  if(isIP){
+    zoneSel.innerHTML='<option>IP</option>';zoneSel.value='IP';
+    patLabel.textContent='IP address';
+  }else{
+    zoneSel.innerHTML='<option>PATH</option><option>QUERY_STRING</option><option>HEADERS</option><option>BODY</option>';
+    zoneSel.value=zone;
+    patLabel.textContent='Pattern';
+  }
+
   document.getElementById('edit-action').value=rule.action||'BLOCK';
   document.getElementById('edit-pattern').value=rule.match_pattern||rule.pattern||'';
   const notice=document.getElementById('default-rule-notice');
@@ -576,6 +640,8 @@ function openDetailModal(rule){
   ['edit-name','edit-zone','edit-pattern'].forEach(fid=>{
     const el=document.getElementById(fid);el.disabled=isDef;el.style.opacity=isDef?'.4':'1';
   });
+  // even on custom rules, the zone is locked for IP rules (only IP is valid)
+  if(isIP&&!isDef){zoneSel.disabled=true;zoneSel.style.opacity='.5';}
   const delBtn=document.getElementById('detail-del-btn');
   delBtn.disabled=isDef;delBtn.style.opacity=isDef?'.3':'1';
   delBtn.title=isDef?'Default rules cannot be deleted':'';
@@ -588,8 +654,18 @@ document.getElementById('modal-detail').addEventListener('click',function(e){if(
 async function saveRuleEdit(){
   if(!_rule)return;
   const id=_rule.id||_rule.rule_id,isDef=DEFAULT_IDS.has(id);
+  const isIP=(_rule.rule_type==='IP_MATCH');
   const payload={action:document.getElementById('edit-action').value,is_active:_rule.is_active!==false};
-  if(!isDef){payload.name=document.getElementById('edit-name').value;payload.target_zone=document.getElementById('edit-zone').value;payload.match_pattern=document.getElementById('edit-pattern').value;}
+  if(!isDef){
+    const pattern=document.getElementById('edit-pattern').value.trim();
+    if(isIP){
+      const ipv4=/^(?:\d{1,3}\.){3}\d{1,3}$/, ipv6=/^[0-9a-fA-F:]+$/;
+      if(!ipv4.test(pattern)&&!ipv6.test(pattern)){toast('Enter a valid IP address');return;}
+    }
+    payload.name=document.getElementById('edit-name').value;
+    payload.target_zone=document.getElementById('edit-zone').value;
+    payload.match_pattern=pattern;
+  }
   try{const r=await fetch(`${WAF}/waf/rules/${id}`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
     const d=await r.json();
     if(r.ok){closeDetailModal();loadRules();toast('Rule saved','ok');}
@@ -634,7 +710,17 @@ function updateRuleSummary(){
   document.getElementById('ov-rules').textContent=active.length;
 }
 async function createRule(){
-  const payload={name:document.getElementById('new-name').value,rule_type:document.getElementById('new-type').value,target_zone:document.getElementById('new-zone').value,match_pattern:document.getElementById('new-pattern').value,action:document.getElementById('new-action').value};
+  const type=document.getElementById('new-type').value;
+  const pattern=document.getElementById('new-pattern').value.trim();
+  const name=document.getElementById('new-name').value.trim();
+  if(!name){toast('Name is required');return;}
+  if(!pattern){toast(type==='IP_MATCH'?'IP address is required':'Pattern is required');return;}
+  if(type==='IP_MATCH'){
+    // basic IPv4 / IPv6 sanity check
+    const ipv4=/^(?:\d{1,3}\.){3}\d{1,3}$/, ipv6=/^[0-9a-fA-F:]+$/;
+    if(!ipv4.test(pattern)&&!ipv6.test(pattern)){toast('Enter a valid IP address');return;}
+  }
+  const payload={name:name,rule_type:type,target_zone:document.getElementById('new-zone').value,match_pattern:pattern,action:document.getElementById('new-action').value};
   try{const r=await fetch(`${WAF}/waf/rules`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
     const d=await r.json();
     if(r.ok){closeNewRuleModal();loadRules();toast('Rule created','ok');}
@@ -680,6 +766,15 @@ async function loadAnalytics(){
         return`<div class="bar"><span class="bl">${x.ip}</span><div class="bt"><div class="bf" style="width:${Math.round((c/mx)*100)}%;background:var(--txt)"></div></div><span class="bc">${c}</span></div>`;
       }).join('');
     }
+    if(d.attack_types&&d.attack_types.length){
+      const mx=Math.max(...d.attack_types.map(x=>x.count||0));
+      document.getElementById('atk-types-list').innerHTML=d.attack_types.map(x=>{
+        const c=x.count||0;
+        return`<div class="bar"><span class="bl" title="${x.type}">${x.type}</span><div class="bt"><div class="bf" style="width:${Math.round((c/mx)*100)}%;background:var(--red)"></div></div><span class="bc">${c}</span></div>`;
+      }).join('');
+    }else{
+      document.getElementById('atk-types-list').innerHTML=`<span style="color:var(--txt3);font-size:10px">No data</span>`;
+    }
   }catch{document.getElementById('ov-total').textContent='offline';}
 }
 let rpmH=[];
@@ -709,18 +804,35 @@ async function loadLogs(){
 }
 
 // ACTIONS
+let ALL_ACTIONS=[];
 async function loadActions(){
   try{const r=await fetch(`${WAF}/waf/actions?limit=50`);const d=await r.json();
-    document.getElementById('actions-body').innerHTML=(d.data||[]).map(a=>`<tr>
+    ALL_ACTIONS=d.data||[];
+    document.getElementById('actions-body').innerHTML=ALL_ACTIONS.map((a,i)=>`<tr class="rule-row" onclick="openActionModal(${i})">
       <td style="color:var(--txt3)">${a.timestamp?a.timestamp.slice(11,19):'\u2013'}</td>
       <td>${atag(a.action_taken)}</td>
       <td style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:10px">${a.rule?.name||'\u2013'}</td>
       <td style="color:var(--red);font-size:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${a.trigger||'\u2013'}</td>
-      <td style="font-size:10px;font-weight:500">${a.network?.client_ip||'\u2013'}</td>
+      <td style="font-size:10px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${a.network?.client_ip||'\u2013'}</td>
       <td style="color:var(--txt3);font-size:10px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${a.network?.request_path||'\u2013'}</td>
     </tr>`).join('');
   }catch{document.getElementById('actions-body').innerHTML=`<tr><td colspan="6" style="text-align:center;color:var(--txt3);padding:12px">Backend offline</td></tr>`;}
 }
+function openActionModal(i){
+  const a=ALL_ACTIONS[i];if(!a)return;
+  document.getElementById('act-action-tag').innerHTML=atag(a.action_taken==='BLOCK'?'BLOCK':'LOG');
+  document.getElementById('act-id').textContent=a.action_id||'\u2013';
+  document.getElementById('act-time').textContent=a.timestamp?a.timestamp.replace('T',' ').slice(0,19):'\u2013';
+  document.getElementById('act-rule').textContent=a.rule?.name||'\u2013';
+  document.getElementById('act-ruleid').textContent=a.rule?.id!=null?`#${a.rule.id}`:'\u2013';
+  document.getElementById('act-ip').textContent=a.network?.client_ip||'\u2013';
+  document.getElementById('act-logid').textContent=a.network?.log_id||'\u2013';
+  document.getElementById('act-trigger').textContent=a.trigger||'\u2013';
+  document.getElementById('act-path').textContent=a.network?.request_path||'\u2013';
+  document.getElementById('modal-action').classList.add('open');
+}
+function closeActionModal(){document.getElementById('modal-action').classList.remove('open')}
+document.getElementById('modal-action').addEventListener('click',function(e){if(e.target===this)closeActionModal()});
 
 // IF SCANNER
 let blockedIPs=new Set();

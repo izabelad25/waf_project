@@ -12,9 +12,10 @@ def block_and_log(ip: str, trigger: str, reason: str, current_time):
         CACHE_IPS.add(ip)
 
         new_rule_id = add_new_rule("Analyzer " + sanitize_path(reason), "IP_MATCH", "IP", ip, action='BLOCK')
+
         
         firewall_actions_buffer.append((
-            str(uuid.uuid4()), current_time, sanitize_path(trigger),
+            str(uuid.uuid4()), current_time, None,
             new_rule_id, "BLOCK", sanitize_path(reason)
         ))
 
@@ -161,5 +162,3 @@ async def analyzer():
         finally:
              if cursor:
                 cursor.close()
-                    
-
