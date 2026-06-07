@@ -130,3 +130,32 @@ def run_scan(db) -> dict:
         "scatter_points":  scatter_points,
         "anomalies":       anomaly_list,
     }
+
+def retrain(archive_dir: str) -> dict:
+    """
+    Apelează isoForestModel.retrain_from_parquet(), apoi înlocuiește
+    toate globalele din if_scanner cu noile obiecte antrenate.
+    Următorul apel run_scan() folosește modelul nou — fără restart.
+    """
+    global _ISO, _OHE, _SCALER, _TRAIN_URL_FREQ, _TRAIN_UA_FREQ, _VALID_NUM
+ 
+    result = _mod.retrain_from_parquet(archive_dir)
+ 
+    if "error" in result:
+        return result   # propagă dict-ul de eroare spre rută
+ 
+    _ISO            = result["model"]
+    _OHE            = result["ohe"]
+    _SCALER         = result["scaler"]
+    _TRAIN_URL_FREQ = result["url_freq_map"]
+    _TRAIN_UA_FREQ  = result["ua_freq_map"]
+    _VALID_NUM      = result["valid_numeric"]
+ 
+    return {
+        "status":           "retrained",
+        "train_rows":       result["train_rows"],
+        "test_rows":        result["test_rows"],
+        "anomaly_rate_pct": result["anomaly_rate_pct"],
+        "archive_count":    result["archive_count"],
+    }
+ 

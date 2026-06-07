@@ -356,6 +356,8 @@ textarea{resize:vertical;min-height:52px}
   <div class="ps">Scan for anomalies...</div>
   <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap">
     <button class="btn btn-p btn-sm" id="scan-btn" onclick="startScan()">Start scanning</button>
+    <button class="btn btn-sm" id="retrain-btn" onclick="startRetrain()">Retrain on archives</button>
+    <span id="retrain-status" style="font-size:10px;color:var(--txt3)"></span>
     <span id="scan-status" style="font-size:10px;color:var(--txt3)"> </span>
     <span id="scan-badge" style="display:none;font-size:9px;padding:0 8px;border:1px solid var(--red);color:var(--red)"></span>
   </div>
@@ -381,7 +383,7 @@ textarea{resize:vertical;min-height:52px}
 
 <!-- INFO -->
 <div class="view" id="view-info">
-  <div class="ph">About Firewall</div>
+  <div class="ph">About Fireball</div>
   <div class="ps">system info / architecture</div>
   <div class="info-grid">
     <div class="ascii-panel">
@@ -399,7 +401,7 @@ textarea{resize:vertical;min-height:52px}
       |  ( ) |     /    |_______|
       |___|__|    /
            \_____/</pre>
-      <div class="ascii-title">FIREWALL</div>
+      <div class="ascii-title">FIREBALL WAF</div>
       
     </div>
     <div class="info-right">
@@ -906,6 +908,30 @@ async function blockIP(ip,btn){
       toast(`IP ${ip} blocked`,'ok');
     }else{btn.textContent='Error';btn.disabled=false;}
   }catch{btn.textContent='Error';btn.disabled=false;}
+}
+
+
+// RETRAIN
+async function startRetrain(){
+  const btn=document.getElementById('retrain-btn');
+  const status=document.getElementById('retrain-status');
+  btn.disabled=true;
+  status.innerHTML='<span class="scan-spin"></span>retraining on archived data…';
+  try{
+    const r=await fetch(`${WAF}/waf/retrain`,{method:'POST'});
+    const d=await r.json();
+    if(d.error){
+      status.textContent=d.message||d.error;
+    }else{
+      status.textContent=
+        `Retrained — ${(d.train_rows||0).toLocaleString()} train rows, `+
+        `${(d.test_rows||0).toLocaleString()} test rows, `+
+        `anomaly rate ${d.anomaly_rate_pct}% `+
+        `(${d.archive_count} archive files)`;
+      toast('Model retrained successfully','ok');
+    }
+  }catch{status.textContent='Network error';}
+  btn.disabled=false;
 }
 
 // INIT

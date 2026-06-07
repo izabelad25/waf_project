@@ -215,6 +215,113 @@ f1_tr = print_metrics("TRAIN", y_true_train, y_pred_train)
 f1_te = print_metrics("TEST",  y_true_test,  y_pred_test)
 print(f"\n  {'OK' if f1_tr >= f1_te else 'nu e ok'} TRAIN F1 ({f1_tr:.4f}) >= TEST F1 ({f1_te:.4f})")
 
+def retrain_from_parquet(archive_dir: str) -> dict:
+    """
+    Citește toate fișierele fireball_archive_*.parquet din archive_dir,
+    filtrează rândurile activity_logs și reantrenează pipeline-ul complet.
+ 
+    Returnează un dict cu noile obiecte model + metrici de bază.
+    Fără etichete is_anomaly în arhive → anomaly_rate_pct (fracția din
+    setul de test scorată ca anomalie) este folosită ca proxy.
+    """
+    import glob
+    import duckdb as _duckdb
+ 
+    files = sorted(glob.glob(
+        os.path.join(archive_dir, "fireball_archive_*.parquet")
+    ))
+    if not files:
+        return {"error": "no_archives"}
+ 
+    # Citire doar rânduri activity_logs din fiecare fișier arhivă
+    tmp = _duckdb.connect()
+    frames = []
+    for f in files:
+        try:
+            part = tmp.execute(
+                "SELECT timestamp, client_ip, field_a, field_b, "
+                "       field_c, field_d, field_e "
+                f"FROM read_parquet('{f}') "
+                "WHERE source_table = 'activity_logs'"
+            ).df()
+            frames.append(part)
+        except Exception:
+            pass  # sari fișierele corupte
+    tmp.close()
+ 
+    if not frames:
+        return {"error": "no_data"}
+ 
+    data = pd.concat(frames, ignore_index=True)
+    data = data.dropna(subset=['field_b', 'field_d']).reset_index(drop=True)
+ 
+    # field_e e stocat ca VARCHAR în Parquet → conversie la float
+    data['field_e'] = pd.to_numeric(data['field_e'], errors='coerce').fillna(0.0)
+ 
+    # field_c e status_code string ("200", "403") → ALLOW/BLOCK
+    # (aceeași logică ca în if_scanner.run_scan)
+    def _to_action(v):
+        try:
+            return "BLOCK" if int(float(str(v))) in (401, 403) else "ALLOW"
+        except Exception:
+            return "ALLOW"
+    data['field_c'] = data['field_c'].apply(_to_action)
+ 
+    n = len(data)
+    if n < 100:
+        return {"error": "not_enough_data", "count": n}
+ 
+    # Aceleași fracții de eșantionare ca în antrenarea originală
+    t  = data.sample(frac=0.25, random_state=42)
+    remaining = data.drop(index=t.index)
+    te = remaining.sample(n=min(int(0.10 * n), len(remaining)), random_state=42)
+    t  = t.reset_index(drop=True)
+    te = te.reset_index(drop=True)
+ 
+    new_url_freq = t['field_b'].value_counts()
+    new_ua_freq  = t['field_d'].value_counts()
+ 
+    t  = add_features(t,  new_url_freq, new_ua_freq)
+    te = add_features(te, new_url_freq, new_ua_freq)
+ 
+    new_ohe    = OneHotEncoder(handle_unknown='ignore', sparse_output=False)
+    new_scaler = StandardScaler()
+    new_valid  = [c for c in numeric_cols if t[c].nunique() > 1]
+ 
+    enc_t = new_ohe.fit_transform(t[categorical_cols])
+    num_t = new_scaler.fit_transform(t[new_valid])
+    X_t = pd.concat([
+        pd.DataFrame(enc_t, columns=new_ohe.get_feature_names_out(categorical_cols)),
+        pd.DataFrame(num_t, columns=new_valid)
+    ], axis=1)
+ 
+    new_iso = IsolationForest(
+        n_estimators=100, contamination=0.03,
+        max_samples=256, max_features=0.9, random_state=42,
+    )
+    new_iso.fit(X_t)
+ 
+    # Evaluare pe test — fără etichete, folosim rata de anomalii ca proxy
+    enc_te = new_ohe.transform(te[categorical_cols])
+    num_te = new_scaler.transform(te[new_valid].fillna(0))
+    X_te = pd.concat([
+        pd.DataFrame(enc_te, columns=new_ohe.get_feature_names_out(categorical_cols)),
+        pd.DataFrame(num_te, columns=new_valid)
+    ], axis=1)
+    scores_te = new_iso.decision_function(X_te)
+ 
+    return {
+        "model":            new_iso,
+        "ohe":              new_ohe,
+        "scaler":           new_scaler,
+        "url_freq_map":     new_url_freq,
+        "ua_freq_map":      new_ua_freq,
+        "valid_numeric":    new_valid,
+        "train_rows":       len(t),
+        "test_rows":        len(te),
+        "anomaly_rate_pct": round(float((scores_te < 0).mean()) * 100, 2),
+        "archive_count":    len(files),
+    }
 
 # import matplotlib.pyplot as plt
 # from sklearn.metrics import ConfusionMatrixDisplay
