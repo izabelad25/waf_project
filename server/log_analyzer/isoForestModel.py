@@ -66,7 +66,7 @@ IOC = [
 
 import os
 
-data = pd.read_csv(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'activity_logs_bun_diversified.csv'))
+data = pd.read_csv(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'activity_logs_bun_diversified_2.csv'))
 
 relevant = (data[['timestamp', 'client_ip', 'field_a' ,'field_b', 'field_c', 'field_d', 'field_e']]
             .dropna(subset=['field_b', 'field_d', 'field_e'])

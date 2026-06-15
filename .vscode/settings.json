@@ -13,7 +13,7 @@
             "type": "file",
             "path": "c:\\Users\\Izabela\\Documents\\GitHub\\waf_test\\server\\fireball.db",
             "readOnly": true,
-            "attached": false
+            "attached": true
         }
     ],
     "duckdb.defaultDatabase": "fireball"

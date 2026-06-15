@@ -45,7 +45,7 @@ N_ANOMALY  = 60
 CSV_PATH = os.path.join(
     os.path.dirname(os.path.abspath(__file__)),
     "log_analyzer",
-    "activity_logs_bun_diversified.csv",
+    "activity_logs_bun_diversified_2.csv",
 )
 
 VALID_METHODS = {"GET", "POST", "PUT", "DELETE", "PATCH", "HEAD", "OPTIONS"}

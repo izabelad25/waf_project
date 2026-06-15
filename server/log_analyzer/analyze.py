@@ -88,7 +88,7 @@ async def analyzer():
         ),
 
         (
-            "DDoS",
+            "DoS",
             """
             SELECT client_ip, COUNT(*) AS req_count
             FROM activity_logs
@@ -97,7 +97,7 @@ async def analyzer():
             HAVING COUNT(*) >= 200
             """,
             lambda row: f"{row[1]} requests in 1min (rate abuse)",
-            "ddos_rate_abuse"
+            "dos_rate_abuse"
         ),
 
         (
