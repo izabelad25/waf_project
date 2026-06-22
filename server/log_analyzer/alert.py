@@ -1,27 +1,48 @@
 import aiosmtplib 
 from email.message import EmailMessage
 import os
+import sys
+import json
 from dotenv import load_dotenv
 load_dotenv()
 
-import json
 
-with open('waf_config.json', 'r') as file:
-    data = json.load(file)
 
-FROM = 'firewallapplicenta@gmail.com'
-TO = data["alert_email"] 
+_BASE = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
+CONFIG_PATH = os.path.join(os.path.dirname(_BASE), "waf_config.json")
 
-#pass !! from env
-PASSWORD = os.getenv("MAIL_APP_PASS")
+FROM = os.getenv("MAIL_ALERT") 
+PASSWORD = os.getenv("MAIL_APP_PASS") #pass !! from env
+
+def _get_recipient() -> str:
+    #citeste email-ul setat de user din waf_config.json
+    try:
+        with open(CONFIG_PATH, 'r') as file:
+            data = json.load(file)
+            return data.get("alert_email", "").strip()
+    except (FileNotFoundError, json.JSONDecodeError, OSError) as e:
+        print(f"!ALERT! config file read err from {CONFIG_PATH}: {e}")
+        return ""
 
 async def sendMail(subject: str, text: str):
+    email_notify = _get_recipient()
+
+    if not email_notify:
+        print("! No email configured -> email alert skipped")
+        return
+    if not FROM:
+        print("! NO ENV EMAIL")
+        return
+    
+    if not PASSWORD:
+        print("! NO ENV PASSWORD ")
+        return
     
     msg = EmailMessage()
     msg.set_content(text)
     msg['Subject'] = subject
     msg['From'] = FROM
-    msg['To'] = TO
+    msg['To'] = email_notify
     
     try:
         #connect + secure conn to smtp server on port 587

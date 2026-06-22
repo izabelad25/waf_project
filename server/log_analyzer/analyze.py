@@ -8,26 +8,39 @@ from .alert import sendMail
 
 from db.sanitize_data import sanitize_ip, sanitize_path
 
-def block_and_log(ip: str, trigger: str, reason: str, current_time):
-        CACHE_IPS.add(ip)
-
+def block_and_log(ip: str, trigger: str, reason: str, current_time) -> bool:
+        #returneaza TRUE = blocare reusita // FALSE = blocare esuata
+        
         new_rule_id = add_new_rule("Analyzer " + sanitize_path(reason), "IP_MATCH", "IP", ip, action='BLOCK')
 
-        
+        if new_rule_id is None:
+             print(f"ERROR ! in adding new block ip rule")
+             return False
+        #actualizare cache
+        CACHE_IPS.add(ip)
+
         firewall_actions_buffer.append((
             str(uuid.uuid4()), current_time, None,
             new_rule_id, "BLOCK", sanitize_path(reason)
         ))
 
         print(f"[WAF BLOCK] IP={sanitize_ip(ip)} | trigger={sanitize_path(trigger)!r} | reason={sanitize_path(reason)} --> Rules updated!")
+        return True
+
+
+#safe email error catcher 
+async def _send_alert_safe(subject: str, text: str):
+    try:
+          await sendMail(subject, text)
+    except Exception as e:
+         print(f"!ERROR ANALYZER -> email alert failed == {e}")
+
 
 async def analyzer():
-    
     #every threat has a specific query 
     #format == label, query, block threshold, template reason, label for trigger 
 
     analyzer_query_list = [
-         
          # ! specific for the WAF 
          (
             "Repeated WAF Evasion",
@@ -151,14 +164,19 @@ async def analyzer():
                       rows = cursor.fetchall()
                       for row in rows:
                            ip = row[0]
+
                            if ip not in CACHE_IPS:
-                                block_and_log(ip, trigger, reason(row), current_time)
-                                await sendMail("WAF ALERT", f"NEW --> {reason(row)} detected at {current_time.isoformat()}\n IP {sanitize_ip(ip)} blocked!")
+                                if block_and_log(ip, trigger, reason(row), current_time):
+                                    asyncio.create_task(_send_alert_safe(
+                                        "WAF ALERT",
+                                        f"NEW --> {reason(row)} detected at {current_time.isoformat()}\n IP {sanitize_ip(ip)} blocked!"
+                                    ))
+                                
                 except Exception as e:
-                    print(f"[ERR analyzer][{check_name}] query failed = {e}")
+                    print(f"! ERR analyzer ! {check_name} query failed = {e}")
 
         except Exception as e:
-             print(f"[ERR] analyzer crashed bcs: {e}")
+             print(f"! ERR ! analyzer crashed bcs: {e}")
         finally:
              if cursor:
                 cursor.close()
