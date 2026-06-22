@@ -1,5 +1,4 @@
 import asyncio
-from datetime import datetime
 from db.init_db import db
 
 #BUFFER == temp storage
@@ -13,16 +12,21 @@ def logs_writer():
     if not activity_logs_buffer and not firewall_actions_buffer:
         return
     
+    #swap cu lista goala pt prevenire pierdere date 
+    activity_batch = activity_logs_buffer
+    activity_logs_buffer = []
+    actions_batch = firewall_actions_buffer
+    firewall_actions_buffer = []
+
     try:
-        if activity_logs_buffer:
+        if activity_batch:
             db.executemany("INSERT INTO activity_logs " \
-            "VALUES (?, ?, ?, ?, ?, ?, ?, ?)", activity_logs_buffer)
-            activity_logs_buffer.clear()
-        
-        if firewall_actions_buffer:
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?)", activity_batch)
+            
+        if actions_batch:
             db.executemany("INSERT INTO firewall_actions " \
-            "VALUES (?, ?, ?, ?, ?, ?)", firewall_actions_buffer)
-            firewall_actions_buffer.clear()
+            "VALUES (?, ?, ?, ?, ?, ?)", actions_batch)
+            
     except Exception as e:
         print(f"Error in writing log batches to DB: {e}")
 

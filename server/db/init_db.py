@@ -2,7 +2,6 @@ import duckdb
 import regex 
 import os
 import sys
-from db.sanitize_data import sanitize_ip, sanitize_path
 
 _BASE   = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
 DB_PATH = os.path.join(os.path.dirname(_BASE), "fireball.db")
@@ -235,12 +234,22 @@ reload_cache()
 #operations for analyzer
 def add_new_rule(name: str, rule_type: str, target_zone: str, match_pattern: str, action: str = 'BLOCK'):
 
-    valid_zones = {'PATH', 'BODY', 'QUERY_STRING', 'HEADERS', 'IP'}
+    valid_regex_zones = set(CACHE_REGEX.keys())
 
-    if target_zone not in valid_zones and rule_type != 'IP_MATCH':
-        print(f"Invalid rule insertion == cancelled")
+    if rule_type == 'IP_MATCH':
+        if target_zone != 'IP':
+            print(f"Invalid rule insertion: IP RULE requires target_zone='IP', got '{target_zone}' == cancelled")
+            return None
+    elif rule_type == 'REGEX_MATCH':
+        if target_zone not in valid_regex_zones:
+            print(f"Invalid rule insertion: REGEX RULE target_zone must be one of {sorted(valid_regex_zones)}, got '{target_zone}' == cancelled")
+            return None
+    else:
+        print(f"Invalid rule insertion: unknown rule_type '{rule_type}' == cancelled")
         return None
     
+    cursor = None
+
     try:
         cursor = db.cursor()
         #max id
@@ -268,4 +277,5 @@ def add_new_rule(name: str, rule_type: str, target_zone: str, match_pattern: str
         return None
     
     finally:
-        cursor.close()
+        if cursor is not None:
+            cursor.close()

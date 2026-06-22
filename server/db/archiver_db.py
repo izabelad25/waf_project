@@ -48,9 +48,10 @@ def build_archive(cutoff: datetime, archive_file: str)-> dict:
     #4= vacuum db to reclaim disk space
     #  returns a summary dict w counts and file size
 
-    import duckdb
+    from db.init_db import db
+    #foloseste un cursor (evitare creare instanta separata a conn db) ++perfomanta imbunatatita
+    conn = db.cursor()
 
-    conn = duckdb.connect(DB_PATH)
     try:
         cutoff_str = cutoff.strftime("%Y-%m-%d %H:%M:%S")
         #1=count rows to archive 
@@ -90,7 +91,7 @@ def build_archive(cutoff: datetime, archive_file: str)-> dict:
                     CAST(response_time_ms AS VARCHAR) AS field_e,
                     NULL                AS field_f
                 FROM activity_logs
-                WHERE timestamp < '{cutoff_str}'
+                WHERE timestamp < ?
  
                 UNION ALL
  
@@ -106,11 +107,11 @@ def build_archive(cutoff: datetime, archive_file: str)-> dict:
                     NULL                AS field_e,
                     NULL                AS field_f
                 FROM firewall_actions
-                WHERE timestamp < '{cutoff_str}'
+                WHERE timestamp < ?
             )
-            TO '{archive_file}'
+            TO ?
             (FORMAT PARQUET, COMPRESSION ZSTD)
-        """)
+        """, [cutoff_str, cutoff_str, archive_file])
 
         #3=delete rows archived as 1 transaction (if 1 fails both fail)
         conn.execute("BEGIN TRANSACTION")
