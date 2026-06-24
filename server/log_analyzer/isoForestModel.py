@@ -66,7 +66,7 @@ IOC = [
 
 import os
 
-data = pd.read_csv(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'activity_logs_bun_diversified_2.csv'))
+data = pd.read_csv(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'activity_logs_bun_diversified_3.csv'))
 
 relevant = (data[['timestamp', 'client_ip', 'field_a' ,'field_b', 'field_c', 'field_d', 'field_e']]
             .dropna(subset=['field_b', 'field_d', 'field_e'])
@@ -102,11 +102,8 @@ def add_features(df, url_freq_map, ua_freq_map):
 
     return d
 
-
 url_freq_map = data_train['field_b'].value_counts()
 ua_freq_map  = data_train['field_d'].value_counts()
-
-
 
 #aplicarea pe train si test
 data_train = add_features(
@@ -117,19 +114,19 @@ data_test = add_features(
     data_test, url_freq_map, ua_freq_map
 )
 
-print(data_train.head())
+#print(data_train.head())
 
 #normalizarea datelor pt model
-categorical_cols = ['client_ip', 'field_b', 'field_c', 'field_d' ]
+#categorical_cols = ['client_ip', 'field_b', 'field_c', 'field_d' ]
+categorical_cols = [ 'field_c' ]
 numeric_cols     = [
-    'field_e',                 # response time 
-    'url_length',               # lungime URL
+    'field_e',  # response time 
+    'url_length', # lungime URL
     'url_freq',
     'ua_length',
     'ua_freq',                     
-    'ioc_count',               # nr indicatori de compromitere
+    'ioc_count', # nr indicatori de compromitere
     'has_ioc' # binar: exista IoC
-         
 ]
 
 #sunt selectate doar coloanele num valide // cele binare nu
@@ -137,7 +134,7 @@ valid_numeric_cols = [c for c in numeric_cols if data_train[c].nunique() > 1]
 
 #fit_transform pe TRAIN pt a invata distributiile din setul de train
 #one hot enc pt categorical 
-ohe    = OneHotEncoder(handle_unknown='ignore', sparse_output=False)
+ohe = OneHotEncoder(handle_unknown='ignore', sparse_output=False)
 #standard scaler pt numerice valide 
 scaler = StandardScaler()
  
@@ -150,13 +147,13 @@ scaled_num_test   = scaler.transform(data_test[valid_numeric_cols])
 
 df_cat_train = pd.DataFrame(encoded_cat_train, columns=ohe.get_feature_names_out(categorical_cols))
 df_cat_test  = pd.DataFrame(encoded_cat_test,  columns=ohe.get_feature_names_out(categorical_cols))
+
 df_num_train = pd.DataFrame(scaled_num_train,  columns=valid_numeric_cols)
 df_num_test  = pd.DataFrame(scaled_num_test,   columns=valid_numeric_cols)
 
 #df finale train + test
 df_train_final = pd.concat([df_cat_train, df_num_train], axis=1)
 df_test_final  = pd.concat([df_cat_test,  df_num_test],  axis=1)
-
 
 #iso forest model (config + train)
 iso_forest = IsolationForest(
@@ -181,19 +178,18 @@ anomaly_score_test  = iso_forest.decision_function(df_test_final)
 #evaluare scoruri (train / test)
 data_analiza_train = data_train.copy()
 data_analiza_train['anomaly_score'] = anomaly_score_train
-data_analiza_train['anomaly']       = predict_train
+data_analiza_train['anomaly'] = predict_train
  
 data_analiza_test = data_test.copy()
 data_analiza_test['anomaly_score'] = anomaly_score_test
-data_analiza_test['anomaly']       = predict_test
-
+data_analiza_test['anomaly'] = predict_test
 
 #metrici etichetate
 y_true_train = check.loc[data_train['index']].values
-y_true_test  = check.loc[data_test['index']].values
+y_true_test = check.loc[data_test['index']].values
 
 y_pred_train = (predict_train == -1).astype(int)
-y_pred_test  = (predict_test  == -1).astype(int)
+y_pred_test = (predict_test == -1).astype(int)
  
 def print_metrics(split, y_true, y_pred):
     cm = confusion_matrix(y_true, y_pred)
@@ -216,14 +212,10 @@ f1_te = print_metrics("TEST",  y_true_test,  y_pred_test)
 print(f"\n  {'OK' if f1_tr >= f1_te else 'nu e ok'} TRAIN F1 ({f1_tr:.4f}) >= TEST F1 ({f1_te:.4f})")
 
 def retrain_from_parquet(archive_dir: str) -> dict:
-    """
-    Citește toate fișierele fireball_archive_*.parquet din archive_dir,
-    filtrează rândurile activity_logs și reantrenează pipeline-ul complet.
- 
-    Returnează un dict cu noile obiecte model + metrici de bază.
-    Fără etichete is_anomaly în arhive → anomaly_rate_pct (fracția din
-    setul de test scorată ca anomalie) este folosită ca proxy.
-    """
+    #citeste fisierele arhivate preia activity logs 
+    #reantreneaza cu datele arhivate
+    #returneaza dictionar cu noile obiecte + metrici de baza
+   
     import glob
     import duckdb as _duckdb
  
@@ -232,8 +224,7 @@ def retrain_from_parquet(archive_dir: str) -> dict:
     ))
     if not files:
         return {"error": "no_archives"}
- 
-    # Citire doar rânduri activity_logs din fiecare fișier arhivă
+    
     tmp = _duckdb.connect()
     frames = []
     for f in files:
@@ -245,9 +236,10 @@ def retrain_from_parquet(archive_dir: str) -> dict:
                 "WHERE source_table = 'activity_logs'"
             ).df()
             frames.append(part)
-        except Exception:
-            pass  # sari fișierele corupte
-    tmp.close()
+        except (IOError, _duckdb.Error) as e:
+            print(f"retraining stopped == corrupted archive {f} err-> {e}")
+        finally:
+            tmp.close()
  
     if not frames:
         return {"error": "no_data"}
@@ -255,11 +247,10 @@ def retrain_from_parquet(archive_dir: str) -> dict:
     data = pd.concat(frames, ignore_index=True)
     data = data.dropna(subset=['field_b', 'field_d']).reset_index(drop=True)
  
-    # field_e e stocat ca VARCHAR în Parquet → conversie la float
+    # field_e (varchar in parquet) == conversie float
     data['field_e'] = pd.to_numeric(data['field_e'], errors='coerce').fillna(0.0)
  
-    # field_c e status_code string ("200", "403") → ALLOW/BLOCK
-    # (aceeași logică ca în if_scanner.run_scan)
+    # field_c e status_code string ("200", "403") == ALLOW/BLOCK
     def _to_action(v):
         try:
             return "BLOCK" if int(float(str(v))) in (401, 403) else "ALLOW"
@@ -271,22 +262,22 @@ def retrain_from_parquet(archive_dir: str) -> dict:
     if n < 100:
         return {"error": "not_enough_data", "count": n}
  
-    # Aceleași fracții de eșantionare ca în antrenarea originală
-    t  = data.sample(frac=0.25, random_state=42)
+    #esantionare 
+    t = data.sample(frac=0.25, random_state=42)
     remaining = data.drop(index=t.index)
     te = remaining.sample(n=min(int(0.10 * n), len(remaining)), random_state=42)
-    t  = t.reset_index(drop=True)
+    t = t.reset_index(drop=True)
     te = te.reset_index(drop=True)
  
     new_url_freq = t['field_b'].value_counts()
-    new_ua_freq  = t['field_d'].value_counts()
+    new_ua_freq = t['field_d'].value_counts()
  
-    t  = add_features(t,  new_url_freq, new_ua_freq)
+    t = add_features(t,  new_url_freq, new_ua_freq)
     te = add_features(te, new_url_freq, new_ua_freq)
  
-    new_ohe    = OneHotEncoder(handle_unknown='ignore', sparse_output=False)
+    new_ohe = OneHotEncoder(handle_unknown='ignore', sparse_output=False)
     new_scaler = StandardScaler()
-    new_valid  = [c for c in numeric_cols if t[c].nunique() > 1]
+    new_valid = [c for c in numeric_cols if t[c].nunique() > 1]
  
     enc_t = new_ohe.fit_transform(t[categorical_cols])
     num_t = new_scaler.fit_transform(t[new_valid])
@@ -301,7 +292,7 @@ def retrain_from_parquet(archive_dir: str) -> dict:
     )
     new_iso.fit(X_t)
  
-    # Evaluare pe test — fără etichete, folosim rata de anomalii ca proxy
+    # evaluare pe testul esantionat (rata de anomalii folosita ca proxy)
     enc_te = new_ohe.transform(te[categorical_cols])
     num_te = new_scaler.transform(te[new_valid].fillna(0))
     X_te = pd.concat([
