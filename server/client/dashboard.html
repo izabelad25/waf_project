@@ -497,6 +497,19 @@ textarea{resize:vertical;min-height:52px}
   </div>
 </div>
 
+<!-- CONFIRM MODAL -->
+<div class="modal-wrap" id="modal-confirm">
+  <div class="modal">
+    <div class="modal-title" id="confirm-title">Confirm action</div>
+    <div style="font-size:11px;color:var(--txt2);line-height:1.6;margin-bottom:14px" id="confirm-message"></div>
+    <div id="confirm-target" style="font-size:10px;color:var(--txt3);border-left:2px solid var(--red);padding:6px 8px;margin-bottom:12px;display:none"></div>
+    <div class="ma">
+      <button class="btn btn-sm" onclick="closeConfirmModal()">Cancel</button>
+      <button class="btn btn-d btn-sm" id="confirm-ok-btn">Delete</button>
+    </div>
+  </div>
+</div>
+
 <!-- TOAST -->
 <div class="toast" id="toast"></div>
 
@@ -638,7 +651,21 @@ function openDetailModal(rule){
   const delBtn=document.getElementById('detail-del-btn');
   delBtn.disabled=isDef;delBtn.style.opacity=isDef?'.3':'1';
   delBtn.title=isDef?'Default rules cannot be deleted':'';
-  delBtn.onclick=isDef?null:()=>{if(confirm(`Delete rule #${id}?`)){deleteRule(id);closeDetailModal();}};
+  delBtn.onclick = isDef ? null : () => {
+  showConfirm(
+    'Delete firewall rule',
+    'This rule will be permanently removed from the WAF. The action cannot be undone.',
+    `Rule #${id} \u2014 ${rule.name}`,
+    async () => {
+      try{
+        const r=await fetch(`${WAF}/waf/rules/${id}`,{method:'DELETE'});
+        const d=await r.json();
+        if(r.ok){closeDetailModal();loadRules();toast('Rule deleted','ok');}
+        else toast(d.detail?.message||'Error deleting rule');
+      }catch{toast('Error deleting rule');}
+    }
+  );
+};
   document.getElementById('modal-detail').classList.add('open');
 }
 function closeDetailModal(){document.getElementById('modal-detail').classList.remove('open');_rule=null;}
@@ -720,18 +747,23 @@ async function createRule(){
     else toast(d.detail?.message||JSON.stringify(d.detail)||'Error creating rule');
   }catch{toast('Error creating rule');}
 }
+
 async function deleteRule(id){
   if(DEFAULT_IDS.has(id)){toast('Default rules cannot be deleted');return;}
-  if(!confirm(`Delete rule #${id}?`))return;
-  try{const r=await fetch(`${WAF}/waf/rules/${id}`,{method:'DELETE'});
-    const d=await r.json();
-    if(r.ok){loadRules();toast('Rule deleted','ok');}
-    else toast(d.detail?.message||'Error deleting rule');
-  }catch{toast('Error deleting rule');}
-}
-async function toggleRule(id,el){
-  el.classList.toggle('on');
-  try{await fetch(`${WAF}/waf/rules/${id}`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({is_active:el.classList.contains('on')})});loadRules();}catch{}
+  const rule = ALL_RULES.find(r => (r.id||r.rule_id) === id);
+  showConfirm(
+    'Delete firewall rule',
+    'This rule will be permanently removed from the WAF. The action cannot be undone.',
+    rule ? `Rule #${id} \u2014 ${rule.name}` : `Rule #${id}`,
+    async () => {
+      try{
+        const r=await fetch(`${WAF}/waf/rules/${id}`,{method:'DELETE'});
+        const d=await r.json();
+        if(r.ok){loadRules();toast('Rule deleted','ok');}
+        else toast(d.detail?.message||'Error deleting rule');
+      }catch{toast('Error deleting rule');}
+    }
+  );
 }
 
 // ANALYTICS
@@ -827,31 +859,79 @@ function openActionModal(i){
 function closeActionModal(){document.getElementById('modal-action').classList.remove('open')}
 document.getElementById('modal-action').addEventListener('click',function(e){if(e.target===this)closeActionModal()});
 
+
+function showConfirm(title, message, targetLine, onConfirm){
+  document.getElementById('confirm-title').textContent   = title;
+  document.getElementById('confirm-message').textContent = message;
+  const t = document.getElementById('confirm-target');
+  if(targetLine){ t.textContent = targetLine; t.style.display = 'block'; }
+  else          { t.textContent = '';         t.style.display = 'none';  }
+
+  document.getElementById('confirm-ok-btn').onclick = () => {
+    closeConfirmModal();
+    if (typeof onConfirm === 'function') onConfirm();
+  };
+  document.getElementById('modal-confirm').classList.add('open');
+}
+function closeConfirmModal(){
+  document.getElementById('modal-confirm').classList.remove('open');
+}
+document.getElementById('modal-confirm').addEventListener('click', function(e){
+  if(e.target === this) closeConfirmModal();
+});
+
 // IF SCANNER
 let blockedIPs=new Set();
+
+let scanCounter = 0;
+
 async function startScan(){
-  const btn=document.getElementById('scan-btn');
-  const status=document.getElementById('scan-status');
-  const badge=document.getElementById('scan-badge');
-  btn.disabled=true;btn.textContent='Scanning\u2026';
-  status.innerHTML='<span class="scan-spin"></span>detection model is processing the requests...';
-  badge.style.display='none';
+  const btn    = document.getElementById('scan-btn');
+  const status = document.getElementById('scan-status');
+  const badge  = document.getElementById('scan-badge');
+  const card   = document.getElementById('anomaly-list-card');
+  const tbody  = document.getElementById('anomaly-tbody');
+  const noMsg  = document.getElementById('no-anomalies-msg');
+
+  scanCounter++;
+
+  btn.disabled    = true;
+  btn.textContent = 'Scanning\u2026';
+  badge.style.display = 'none';
+  badge.textContent   = '';
+  card.style.display  = 'none';
+  tbody.innerHTML     = '';
+  noMsg.style.display = 'none';
+  status.innerHTML = `<span class="scan-spin"></span>detection model is processing the requests...`;
+
   try{
-    const res=await fetch(`${WAF}/waf/if_scan`,{method:'POST'});
-    const data=await res.json();
+    const res  = await fetch(`${WAF}/waf/if_scan`, {method:'POST'});
+    const data = await res.json();
+
     if(data.error){
-      status.textContent=data.error==='not_enough_data'
-        ?`Insufficient data(${data.count||0} -> the model cannot run on less than 100 logs)`
-        :'Error-> '+data.error;
-      btn.disabled=false;btn.textContent='Scan for anomalies';return;
+      status.textContent = data.error === 'not_enough_data'
+        ? `Insufficient data (${data.count||0} \u2014 the model cannot run on less than 100 logs)`
+        : 'Error -> ' + data.error;
+      return;
     }
-    const n=data.anomalies_found||0;
-    status.textContent=`Complete scan !! \u2014 ${(data.total_scanned||0).toLocaleString()} analyzed HTTP requests`;
-    badge.style.display='inline';badge.textContent=`${n} anomalies`;
-    renderAnomalies(data.anomalies||[]);
-    document.getElementById('anomaly-list-card').style.display='block';
-  }catch{status.textContent='Network error -> check if the backend is active';}
-  btn.disabled=false;btn.textContent='Scan for anomalies';
+
+    const n  = data.anomalies_found || 0;
+    const ts = new Date().toLocaleTimeString();
+    status.textContent =
+      
+      `${(data.total_scanned||0).toLocaleString()} analyzed HTTP requests`;
+    badge.style.display = 'inline';
+    badge.textContent   = `${n} anomalies`;
+
+    renderAnomalies(data.anomalies || []);
+    card.style.display = 'block';
+  }catch(e){
+    status.textContent = 'Network error -> check if the backend is active';
+  }finally{
+    
+    btn.disabled    = false;
+    btn.textContent = scanCounter === 1 ? 'Scan for anomalies' : 'Rescan traffic';
+  }
 }
 
 function esc(s){

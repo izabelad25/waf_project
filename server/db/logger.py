@@ -7,16 +7,14 @@ firewall_actions_buffer = []
 
 #function for writing the batches to DUCKdb
 def logs_writer():
-    global activity_logs_buffer, firewall_actions_buffer
-
     if not activity_logs_buffer and not firewall_actions_buffer:
         return
     
     #swap cu lista goala pt prevenire pierdere date 
-    activity_batch = activity_logs_buffer
-    activity_logs_buffer = []
-    actions_batch = firewall_actions_buffer
-    firewall_actions_buffer = []
+    activity_batch = list(activity_logs_buffer)
+    activity_logs_buffer.clear()
+    actions_batch = list(firewall_actions_buffer)
+    firewall_actions_buffer.clear()
 
     try:
         if activity_batch:

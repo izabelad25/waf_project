@@ -17,6 +17,23 @@ from .waf_config import PROXY_STATE
 
 proxy_router = APIRouter()
 
+#headers care descriu conexiunea si nu trebuiesc redirectionati 
+#conexiunea browser -- waf != http conn (waf redirect) -- backend app
+#singurele care necesita redirectionare sunt content-length + transfer-encoding (STARLETTE ofera rasp pt ele)
+
+HBH_HEADERS = {
+    "content-length",
+    "transfer-encoding",
+    "content-encoding",
+    "connection",
+    "keep-alive",
+    "proxy-authenticate",
+    "proxy-authorization",
+    "te",
+    "trailers",
+    "upgrade"
+}
+
 def _resolve_client_ip(request: Request) -> str:
     #simulation testing only
     fwd = request.headers.get("x-forwarded-for")
@@ -135,40 +152,41 @@ async def reverse_proxy(request: Request, path: str):
 
     url = f"{target_URL}{raw_uri}"
 
-    headers = dict(request.headers)
-    headers.pop("host", None)   # httpx sets the correct Host for the target
+    #strip pt headerele care nu trb retransmise
 
+    request_headers = {
+        k: v for k, v in request.headers.items()
+        if k.lower() not in HBH_HEADERS and k.lower() != "host" # httpx seteaza host ul corect
+    }
+    
     try:
-
-        if method in ("POST", "PUT", "PATCH"):
-            target_req = client.build_request(
-                method, url, headers=headers,
-                content=body_bytes
-            )
-        else:
-            target_req = client.build_request(
-                method, url, headers=headers,
-                content=request.stream()
-            )
-
+        target_req = client.build_request(
+            method, url, headers=request_headers,
+            content=body_bytes
+        )
+ 
         target_resp = await client.send(target_req, stream=True)
         status_code = target_resp.status_code
-
+ 
     except httpx.ConnectError:
-        status_code = 502
         return JSONResponse(
             {"error": f"WAF could not reach target at {target_URL}"},
             status_code=502
         )
-
+ 
     response_time_ms = round((time.time() - start_time) * 1000, 2)
-
+ 
     activity_logs_buffer.append((request_id, timestamp, sanitize_ip(client_ip), method,
                        sanitize_path(full_path), status_code, user_agent, response_time_ms))
-
+ 
+    response_headers = {
+        k: v for k, v in target_resp.headers.items()
+        if k.lower() not in HBH_HEADERS
+    }
+ 
     return StreamingResponse(
         target_resp.aiter_raw(),
         status_code=status_code,
-        headers=dict(target_resp.headers),
+        headers=response_headers,
         background=target_resp.aclose
     )

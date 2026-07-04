@@ -14,7 +14,7 @@ def block_and_log(client_ip: str, trigger: str, reason: str, current_time) -> bo
         if sanitized_ip in CACHE_IPS:
              return False
         
-        new_rule_id = add_new_rule(f"Analyzer vlocked {sanitized_ip}", "IP_MATCH", "IP", sanitized_ip, action='BLOCK')
+        new_rule_id = add_new_rule(f"Analyzer blocked {sanitized_ip}", "IP_MATCH", "IP", sanitized_ip, action='BLOCK')
 
         if new_rule_id is None:
              print(f"ERROR ! in adding new block ip rule")
