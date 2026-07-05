@@ -1,6 +1,6 @@
 **Web Application Firewall** _(Bachelor's Thesis Project)_
 
-python based Reverse Proxy Web Application Firewall that runs locally 
+Python based Reverse Proxy Web Application Firewall that runs locally 
 
 ```
 -> Dashboard for monitoring 
@@ -71,8 +71,10 @@ INSTALL >> run the following (clone the project)
    python main.py (runs the waf server)
 ```
 
+----------------------------------------------------------------------------------------------
 OR DOWNLOAD directly (no python interpreter required) 
->>>> check RELEASES --> WAF tag --> DOWNLOAD the binary file and read the instructions ! 
+----------------------------------------------------------------------------------------------
+waf.exe >> check RELEASES --> WAF tag --> DOWNLOAD the binary file and read the instructions ! 
 
 
 
