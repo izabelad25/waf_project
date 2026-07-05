@@ -53,8 +53,8 @@ INSTALL >> run the following (clone the project)
 
 1.
 ```bash
-  git clone https://github.com/<user>/waf_test.git
-  cd waf_test
+  git clone https://github.com/<user>/waf_project.git
+  cd waf_project
   python -m venv venv
 ```
 
