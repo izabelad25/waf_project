@@ -17,9 +17,9 @@ import sys
 from datetime import datetime, timedelta
 
 #paths (pyInstaller safe)
-_BASE = getattr(sys, "_MEIPASS", os.path.dirname(os.path.abspath(__file__)))
-DB_PATH = os.path.join(os.path.dirname(_BASE), "fireball.db")
-ARCHIVE_DIR = os.path.dirname(DB_PATH)
+from paths import app_dir
+DB_PATH = os.path.join(app_dir(), "fireball.db")
+ARCHIVE_DIR = app_dir()
 
 #constants 
 SIZE_THRESHOLD_MB = 200

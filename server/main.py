@@ -2,11 +2,14 @@
 import asyncio
 import sys
 import uvicorn
+import os
 
 #env
 from contextlib import asynccontextmanager
+
 from dotenv import load_dotenv
-load_dotenv()
+from paths import app_dir
+load_dotenv(dotenv_path=os.path.join(app_dir(), ".env"))
 
 #services
 from fastapi import FastAPI
@@ -31,6 +34,10 @@ from routes.if_scan import if_scan_router
 
 #port binding + setup
 from port_config import is_backend_running, print_instructions
+
+#pyinstaller paths
+_BUNDLE = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
+CLIENT_DIR = os.path.join(_BUNDLE, "client")
 
 #  MIDDLEWARE - security policies (CSP + security headers)
 class DashboardCSP(BaseHTTPMiddleware):
@@ -130,11 +137,11 @@ dashboard_app.include_router(waf_actions_router)
 dashboard_app.include_router(config_router)
 dashboard_app.include_router(if_scan_router)
 
-dashboard_app.mount("/client", StaticFiles(directory="client"), name="client")
+dashboard_app.mount("/client", StaticFiles(directory=CLIENT_DIR), name="client")
 
 @dashboard_app.get("/")
 async def load_dashboard():
-    return FileResponse("client/dashboard.html")
+    return FileResponse(os.path.join(CLIENT_DIR, "dashboard.html"))
 
 
 #PROXY APP -- PORT 8080

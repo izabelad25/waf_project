@@ -3,8 +3,8 @@ import regex
 import os
 import sys
 
-_BASE   = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
-DB_PATH = os.path.join(os.path.dirname(_BASE), "fireball.db")
+from paths import app_dir
+DB_PATH = os.path.join(app_dir(), "fireball.db")
 
 print("Initializing WAF database -> DuckBD...")
 

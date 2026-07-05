@@ -1,5 +1,6 @@
 import socket
 
+
 def is_backend_running(port: int, host: str = "127.0.0.1") -> bool:
     """
     verifica daca exista un serviciu activ care asculta pe (host, port)

@@ -11,8 +11,8 @@ from pydantic import BaseModel
 config_router = APIRouter()
 
 #preparing for packaging to exe file
-_BASE = getattr(__import__('sys'), '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
-CONFIG_PATH = os.path.join(os.path.dirname(_BASE), "waf_config.json")
+from paths import app_dir
+CONFIG_PATH = os.path.join(app_dir(), "waf_config.json")
 
 _DEFAULTS = {
     "target_host": "127.0.0.1",

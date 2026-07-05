@@ -3,13 +3,12 @@ from email.message import EmailMessage
 import os
 import sys
 import json
+
+from paths import app_dir
+CONFIG_PATH = os.path.join(app_dir(), "waf_config.json")
+
 from dotenv import load_dotenv
-load_dotenv()
-
-
-
-_BASE = getattr(sys, '_MEIPASS', os.path.dirname(os.path.abspath(__file__)))
-CONFIG_PATH = os.path.join(os.path.dirname(_BASE), "waf_config.json")
+load_dotenv(dotenv_path=os.path.join(app_dir(), ".env"))
 
 FROM = os.getenv("MAIL_ALERT") 
 PASSWORD = os.getenv("MAIL_APP_PASS") #pass !! from env
