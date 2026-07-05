@@ -191,25 +191,7 @@ y_true_test = check.loc[data_test['index']].values
 y_pred_train = (predict_train == -1).astype(int)
 y_pred_test = (predict_test == -1).astype(int)
  
-def print_metrics(split, y_true, y_pred):
-    cm = confusion_matrix(y_true, y_pred)
-    acc = accuracy_score(y_true, y_pred)
-    p  = precision_score(y_true, y_pred, zero_division=0)
-    r  = recall_score(y_true, y_pred, zero_division=0)
-    f1 = f1_score(y_true, y_pred, zero_division=0)
-    print(f"\n{'='*50}")
-    print(f"  {split}")
-    print(f"{'='*50}")
-    print(f"  Accuracy   : {acc:.4f}")
-    print(f"  Precision  : {p:.4f}")
-    print(f"  Recall     : {r:.4f}")
-    print(f"  F1-score   : {f1:.4f}")
-    print(f"  TN={cm[0,0]:5d}  FP={cm[0,1]:4d}  FN={cm[1,0]:4d}  TP={cm[1,1]:4d}")
-    return f1
- 
-f1_tr = print_metrics("TRAIN", y_true_train, y_pred_train)
-f1_te = print_metrics("TEST",  y_true_test,  y_pred_test)
-print(f"\n  {'OK' if f1_tr >= f1_te else 'nu e ok'} TRAIN F1 ({f1_tr:.4f}) >= TEST F1 ({f1_te:.4f})")
+
 
 def retrain_from_parquet(archive_dir: str) -> dict:
     #citeste fisierele arhivate preia activity logs 

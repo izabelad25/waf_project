@@ -2,16 +2,7 @@ import os
 import numpy as np
 import pandas as pd
 
-import importlib.util, sys
- 
-_HERE = os.path.dirname(os.path.abspath(__file__))
- 
-spec = importlib.util.spec_from_file_location(
-    "isoForestModel",
-    os.path.join(_HERE, "isoForestModel.py")
-)
-_mod = importlib.util.module_from_spec(spec)
-spec.loader.exec_module(_mod)
+from log_analyzer import isoForestModel as _mod
 
 #obiectele antrenate pe train set
 _ISO = _mod.iso_forest
