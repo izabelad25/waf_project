@@ -72,4 +72,7 @@ INSTALL >> run the following (clone the project)
 ```
 
 OR DOWNLOAD directly (no python interpreter required) 
->>>> 
+>>>> check RELEASES --> WAF tag --> DOWNLOAD the binary file and read the instructions ! 
+
+
+
