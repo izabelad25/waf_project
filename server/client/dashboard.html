@@ -766,6 +766,39 @@ async function deleteRule(id){
   );
 }
 
+async function toggleRule(id, el){
+  const isDef = DEFAULT_IDS.has(id);
+  
+  const currentlyOn = el.classList.contains('on');
+  const newState = !currentlyOn;
+
+ 
+  el.classList.toggle('on', newState);
+
+  try{
+    const r = await fetch(`${WAF}/waf/rules/${id}`, {
+      method:'PUT',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ is_active: newState })
+    });
+    const d = await r.json();
+    if(r.ok){
+     
+      const rule = ALL_RULES.find(x => (x.id||x.rule_id) === id);
+      if(rule) rule.is_active = newState;
+      updateRuleSummary();
+      toast(newState ? 'Rule enabled' : 'Rule disabled', 'ok');
+    }else{
+      
+      el.classList.toggle('on', currentlyOn);
+      toast(d.detail?.message || 'Error toggling rule');
+    }
+  }catch{
+    el.classList.toggle('on', currentlyOn);
+    toast('Error toggling rule');
+  }
+}
+
 // ANALYTICS
 async function loadAnalytics(){
   try{const r=await fetch(`${WAF}/waf/analytics`);const d=await r.json();
