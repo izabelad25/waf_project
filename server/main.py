@@ -168,7 +168,7 @@ async def main():
     if not is_backend_running(target_port):
         print_instructions(target_port)
         print(f"\nNo backend detected on port {target_port} "
-              f"read the instructions and start the WAF again :) \n")
+              f"read the instructions and start the WAF again  \n")
         #sys.exit(1)
     
     print(f"Backend active on port {target_port}")
@@ -188,7 +188,7 @@ async def main():
     )
 
     print(f" Open WAF Dashboard   ->  http://127.0.0.1:8000")
-    print(f" Reverse Proxy        ->  http://127.0.0.1:8080")
+    
 
     await asyncio.gather(
         uvicorn.Server(dashboard_config).serve(),

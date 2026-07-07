@@ -44,7 +44,5 @@ def print_instructions(target_port: int):
                     """)
     
     print("Start backend normally...")
-    print(f"  Node/Express:  PORT={target_port} node index.js")
-    print(f"  Next.js:       next dev -p {target_port}")
-    print(f"  npm start:     PORT={target_port} npm start")
+    
     print(r"""     +.+"+.+"+.+"+.+"+.+"+.+""")
